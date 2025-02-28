@@ -1,7 +1,3 @@
-// This file contains the logic for handling WebSocket connections using Socket.io.
-// It sets up event listeners for new connections, disconnections, and YouTube search requests.
-// It maintains a shared queue of videos and emits updates to all connected clients.
-
 import { Server } from 'socket.io';
 import { searchYouTube, getVideoDetails } from './controllers/youtubeController';
 import { Video } from './models/video';
@@ -15,8 +11,17 @@ const playNextSong = async (io: Server) => {
     const videoDetails = await getVideoDetails(currentVideo.id);
     const videoDuration = videoDetails ? videoDetails.duration : 300000; // Default to 5 minutes if duration is not available
 
+    // Log the name of the new song and when it will end
+    console.log(`Now playing: ${currentVideo.title}`);
+    console.log(`Ends in: ${videoDuration / 1000} seconds`);
+
     // Notify clients to play the next song
     io.emit('playNextSong', currentVideo);
+
+    // Clear the existing timeout if it exists
+    if (currentTimeout) {
+      clearTimeout(currentTimeout);
+    }
 
     // Set a timeout to remove the song after its duration
     currentTimeout = setTimeout(() => {
@@ -24,6 +29,8 @@ const playNextSong = async (io: Server) => {
       io.emit('queueUpdated', queue);
       playNextSong(io); // Play the next song
     }, videoDuration);
+  } else {
+    console.log('Queue is empty, no song to play');
   }
 };
 
@@ -47,6 +54,18 @@ export const setupSocket = (io: Server) => {
 
         // If this is the first song in the queue, start playing it
         if (queue.length === 1) {
+          playNextSong(io);
+        }
+      }
+    });
+
+    socket.on('removeSong', (index: number) => {
+      if (index >= 0 && index < queue.length) {
+        queue.splice(index, 1);
+        io.emit('queueUpdated', queue);
+
+        // If the removed song was the currently playing song, play the next song
+        if (index === 0 && queue.length > 0) {
           playNextSong(io);
         }
       }

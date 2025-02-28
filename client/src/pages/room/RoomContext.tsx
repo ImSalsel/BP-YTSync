@@ -12,6 +12,7 @@ interface RoomContextProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   handleSearch: (e: React.FormEvent<HTMLFormElement>) => void;
+  removeSong: (index: number) => void;
 }
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
@@ -52,8 +53,14 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSearchTerm('');
   };
 
+  const removeSong = (index: number) => {
+    if (socket) {
+      socket.emit('removeSong', index);
+    }
+  };
+
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong }}>
       {children}
     </RoomContext.Provider>
   );
