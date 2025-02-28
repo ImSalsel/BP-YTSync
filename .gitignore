@@ -1,1 +1,5 @@
 ﻿server/node_modules
+client/API.env
+client/.env
+server/.env
+server/dist
