@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { RoomContainer, SearchBar, VideoPlayer } from './styled';
+import { RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
 import useRoom from './useRoom';
 
@@ -23,14 +23,14 @@ const Room: React.FC = () => {
 
   return (
     <RoomContainer>
-      <form onSubmit={handleSearch}>
+     <SearchForm onSubmit={handleSearch}>
         <SearchBar
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for a video or paste a YouTube link..."
         />
-      </form>
+      </SearchForm>
       <VideoPlayer>
         <YouTube videoId={videoId} opts={opts} style={{ width: '100%', height: '100%' }} />
       </VideoPlayer>

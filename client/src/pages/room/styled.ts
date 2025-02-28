@@ -6,16 +6,17 @@ export const RoomContainer = styled.div`
   background-color: rgb(31, 29, 32);
   display: grid; 
   grid-template-columns: 10% 65% 25%; 
-  grid-template-rows: 20% 50% 30%; 
+  grid-template-rows: 20% 65% 15%; 
   gap: 0px 0px; 
   grid-template-areas: 
     ". Search ."
-    ". YTvideo ."
-    ". botQ ."; 
+    ". YTvideo Queue"
+    ". title ."; 
 
     .video { grid-area: YTvideo; }
-    .bottom { grid-area: botQ; }
+    .bottom { grid-area: title; }
     .search { grid-area: Search; }
+    .queue { grid-area: Queue; }
 `;
 
 export const VideoPlayer = styled.div`
@@ -28,15 +29,18 @@ export const VideoPlayer = styled.div`
   justify-content: center;
 `;
 
-export const SearchBar = styled.input`
+export const SearchForm = styled.form`
   grid-area: Search;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const SearchBar = styled.input`
   width: 80%;
-  height: 20%;
-  margin: auto;
+  height: 30%;
   padding: 10px;
   font-size: 1.2rem;
   border: none;
   border-radius: 5px;
 `;
-
-
