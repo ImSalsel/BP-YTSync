@@ -3,12 +3,13 @@ import { useParams } from 'react-router-dom';
 import { RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
 import useRoom from './useRoom';
+import NoVideo from '../../components/noVideo/NoVideo';
 
 const Room: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { queue, searchTerm, setSearchTerm, handleSearch } = useRoom();
 
-  const videoId = queue.length > 0 ? queue[0].id : 'dQw4w9WgXcQ'; // Default video ID
+  const videoId = queue.length > 0 ? queue[0].id : null;
 
   const opts = {
     height: '100%',
@@ -23,7 +24,7 @@ const Room: React.FC = () => {
 
   return (
     <RoomContainer>
-     <SearchForm onSubmit={handleSearch}>
+      <SearchForm onSubmit={handleSearch}>
         <SearchBar
           type="text"
           value={searchTerm}
@@ -32,7 +33,11 @@ const Room: React.FC = () => {
         />
       </SearchForm>
       <VideoPlayer>
-        <YouTube videoId={videoId} opts={opts} style={{ width: '100%', height: '100%' }} />
+        {videoId ? (
+          <YouTube videoId={videoId} opts={opts} style={{ width: '100%', height: '100%' }} />
+        ) : (
+          <NoVideo />
+        )}
       </VideoPlayer>
     </RoomContainer>
   );

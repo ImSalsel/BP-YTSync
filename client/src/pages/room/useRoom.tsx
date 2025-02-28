@@ -14,12 +14,13 @@ const useRoom = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    socket.on('videoAdded', (newVideo: Video) => {
-      setQueue((prevQueue) => [...prevQueue, newVideo]);
+    // Handle receiving the initial queue and updates to the queue
+    socket.on('queueUpdated', (updatedQueue: Video[]) => {
+      setQueue(updatedQueue);
     });
 
     return () => {
-      socket.off('videoAdded');
+      socket.off('queueUpdated');
     };
   }, []);
 
