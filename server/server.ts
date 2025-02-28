@@ -27,8 +27,13 @@ interface Video {
   url: string;
 }
 
+let queue: Video[] = [];
+
 io.on('connection', (socket) => {
   console.log('New client connected');
+
+  // Send the current queue to the newly connected client
+  socket.emit('queueUpdated', queue);
 
   socket.on('searchYouTube', async (query: string) => {
     try {
@@ -48,7 +53,8 @@ io.on('connection', (socket) => {
         url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
       };
 
-      io.emit('videoAdded', newVideo);
+      queue.push(newVideo);
+      io.emit('queueUpdated', queue);
     } catch (error) {
       console.error('Error searching YouTube:', error);
     }
