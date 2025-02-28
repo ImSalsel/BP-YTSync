@@ -1,9 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
+import { QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
 import useRoom from './useRoom';
 import NoVideo from '../../components/noVideo/NoVideo';
+import Queue from '../../components/quene/Queue';
 
 const Room: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -39,6 +40,10 @@ const Room: React.FC = () => {
           <NoVideo />
         )}
       </VideoPlayer>
+      <QueueContainer>
+        <Queue />
+      </QueueContainer>
+      
     </RoomContainer>
   );
 };

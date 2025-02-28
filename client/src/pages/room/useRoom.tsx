@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-
-const socket = io('http://localhost:4000');
+import io, { Socket } from 'socket.io-client';
 
 interface Video {
   id: string;
@@ -12,21 +10,28 @@ interface Video {
 const useRoom = () => {
   const [queue, setQueue] = useState<Video[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
+    const newSocket = io('http://localhost:4000');
+    setSocket(newSocket);
+
     // Handle receiving the initial queue and updates to the queue
-    socket.on('queueUpdated', (updatedQueue: Video[]) => {
+    newSocket.on('queueUpdated', (updatedQueue: Video[]) => {
       setQueue(updatedQueue);
     });
 
     return () => {
-      socket.off('queueUpdated');
+      newSocket.off('queueUpdated');
+      newSocket.close();
     };
   }, []);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit('searchYouTube', searchTerm);
+    if (socket) {
+      socket.emit('searchYouTube', searchTerm);
+    }
     setSearchTerm('');
   };
 

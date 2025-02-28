@@ -5,9 +5,9 @@ export const RoomContainer = styled.div`
   height: 100vh;
   background-color: rgb(31, 29, 32);
   display: grid; 
-  grid-template-columns: 10% 65% 25%; 
+  grid-template-columns: 5% 65% 25%; 
   grid-template-rows: 20% 65% 15%; 
-  gap: 0px 0px; 
+  gap: 0px 2%; 
   grid-template-areas: 
     ". Search ."
     ". YTvideo Queue"
@@ -17,6 +17,15 @@ export const RoomContainer = styled.div`
     .bottom { grid-area: title; }
     .search { grid-area: Search; }
     .queue { grid-area: Queue; }
+`;
+
+export const QueueContainer = styled.div`
+  grid-area: Queue;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const VideoPlayer = styled.div`
