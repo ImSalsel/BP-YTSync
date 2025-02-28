@@ -2,13 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
-import useRoom from './useRoom';
+import { RoomProvider, useRoomContext } from './RoomContext';
 import NoVideo from '../../components/noVideo/NoVideo';
 import Queue from '../../components/quene/Queue';
 
-const Room: React.FC = () => {
-  const { roomId } = useParams<{ roomId: string }>();
-  const { queue, searchTerm, setSearchTerm, handleSearch } = useRoom();
+const RoomContent: React.FC = () => {
+  const { queue, searchTerm, setSearchTerm, handleSearch } = useRoomContext();
 
   const videoId = queue.length > 0 ? queue[0].id : null;
 
@@ -45,6 +44,16 @@ const Room: React.FC = () => {
       </QueueContainer>
       
     </RoomContainer>
+  );
+};
+
+const Room: React.FC = () => {
+  const { roomId } = useParams<{ roomId: string }>();
+
+  return (
+    <RoomProvider>
+      <RoomContent />
+    </RoomProvider>
   );
 };
 

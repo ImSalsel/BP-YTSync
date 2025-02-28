@@ -1,9 +1,9 @@
 import React from 'react';
 import { QueueContainer, Song } from './styled';
-import useRoom from '../../pages/room/useRoom';
+import { useRoomContext } from '../../pages/room/RoomContext';
 
 const Queue: React.FC = () => {
-  const { queue } = useRoom();
+  const { queue } = useRoomContext();
 
   return (
     <QueueContainer>
