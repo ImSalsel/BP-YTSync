@@ -4,7 +4,6 @@ import { RoomContainer, SearchBar, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
 import useRoom from './useRoom';
 
-
 const Room: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { queue, searchTerm, setSearchTerm, handleSearch } = useRoom();
