@@ -10,6 +10,8 @@ const NoVideoContainer = styled.div`
   color: white;
   font-size: 1.5rem;
   background-color: rgb(18, 18, 19);
+  border-radius: 24px;
+
 `;
 
 const NoVideo: React.FC = () => {

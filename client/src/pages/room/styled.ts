@@ -14,10 +14,22 @@ export const RoomContainer = styled.div`
     ". title ."; 
 
     .video { grid-area: YTvideo; }
-    .bottom { grid-area: title; }
+    .title { grid-area: title; }
     .search { grid-area: Search; }
     .queue { grid-area: Queue; }
 `;
+
+export const SongTitle = styled.div`
+  grid-area: title;
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(18, 18, 19);
+  border-radius: 24px;
+  margin-top: 5%;
+  `;
 
 export const QueueContainer = styled.div`
   grid-area: Queue;
@@ -36,6 +48,8 @@ export const VideoPlayer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 24px;
+
 `;
 
 export const SearchForm = styled.form`
@@ -51,5 +65,5 @@ export const SearchBar = styled.input`
   padding: 10px;
   font-size: 1.2rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 24px;
 `;
