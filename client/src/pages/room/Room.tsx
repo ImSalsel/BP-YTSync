@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
-import YouTube, { YouTubePlayer } from 'react-youtube';
+import YouTube from 'react-youtube';
 import { RoomProvider, useRoomContext } from './RoomContext';
 import NoVideo from '../../components/noVideo/NoVideo';
 import Queue from '../../components/quene/Queue';
 import SongTitle from '../../components/songTitle/SongTitle';
 
 const RoomContent: React.FC = () => {
-  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId } = useRoomContext();
-  const [volume, setVolume] = useState(50);
-  const [player] = useState<YouTubePlayer | null>(null);
+  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player } = useRoomContext();
 
   return (
     <RoomContainer>

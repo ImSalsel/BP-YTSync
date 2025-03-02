@@ -30,6 +30,9 @@ interface RoomContextProps {
   onReady: (event: { target: YouTubePlayer }) => void;
   handlePlayNextSong: ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => void;
   videoId: string | null;
+  volume: number;
+  setVolume: (volume: number) => void;
+  player: YouTubePlayer | null;
 }
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
@@ -46,25 +49,35 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [queue, setQueue] = useState<Video[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [volume] = useState(50);
-  const [, setPlayer] = useState<YouTubePlayer | null>(null);
+  const [volume, setVolume] = useState(50);
+  const [player, setPlayer] = useState<YouTubePlayer | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
+
+  const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
+    setVideoId(video.id);
+    setElapsedTime(elapsedTime);
+  };
+
+  const handleQueueUpdated = (updatedQueue: Video[]) => {
+    setQueue(updatedQueue);
+    if (updatedQueue.length === 0) {
+      setVideoId(null);
+    }
+  };
 
   useEffect(() => {
     const newSocket = io('http://localhost:4000');
     setSocket(newSocket);
 
     // Handle receiving the initial queue and updates to the queue
-    newSocket.on('queueUpdated', (updatedQueue: Video[]) => {
-      setQueue(updatedQueue);
-    });
+    newSocket.on('queueUpdated', handleQueueUpdated);
 
     newSocket.on('playNextSong', handlePlayNextSong);
 
     return () => {
-      newSocket.off('queueUpdated');
-      newSocket.off('playNextSong');
+      newSocket.off('queueUpdated', handleQueueUpdated);
+      newSocket.off('playNextSong', handlePlayNextSong);
       newSocket.close();
     };
   }, []);
@@ -102,13 +115,8 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
-    setVideoId(video.id);
-    setElapsedTime(elapsedTime);
-  };
-
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player }}>
       {children}
     </RoomContext.Provider>
   );
