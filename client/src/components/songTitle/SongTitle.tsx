@@ -1,19 +1,18 @@
 import React from 'react';
-import { SongTitleContainer, VolumeSlider } from './styled';
+import { SongTitleContainer } from './styled';
 import { useRoomContext } from '../../pages/room/RoomContext';
+import VolumeControl from '../volumeControl/VolumeControl';
+import { YouTubePlayer } from 'react-youtube';
 
 interface SongTitleProps {
   volume: number;
   setVolume: (volume: number) => void;
+  player: YouTubePlayer;
 }
 
-const SongTitle: React.FC<SongTitleProps> = ({ volume, setVolume }) => {
+const SongTitle: React.FC<SongTitleProps> = ({ volume, setVolume, player }) => {
   const { queue } = useRoomContext();
   const currentSong = queue.length > 0 ? queue[0] : null;
-
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(Number(event.target.value));
-  };
 
   return (
     <SongTitleContainer>
@@ -22,13 +21,7 @@ const SongTitle: React.FC<SongTitleProps> = ({ volume, setVolume }) => {
       ) : (
         <div>No song playing</div>
       )}
-      <VolumeSlider
-        type="range"
-        min="0"
-        max="100"
-        value={volume}
-        onChange={handleVolumeChange}
-      />
+      <VolumeControl volume={volume} setVolume={setVolume} player={player} />
     </SongTitleContainer>
   );
 };

@@ -19,7 +19,3 @@ export const SongTitleContainer = styled.div`
   z-index: 1000;
 `;
 
-export const VolumeSlider = styled.input`
-  width: 100px;
-  margin-left: 20px;
-`;
