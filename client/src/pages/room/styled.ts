@@ -6,7 +6,7 @@ export const RoomContainer = styled.div`
   background-color: rgb(31, 29, 32);
   display: grid; 
   grid-template-columns: 5% 65% 25%; 
-  grid-template-rows: 20% 65% 15%; 
+  grid-template-rows: 20% 60% 15%; 
   gap: 0px 2%; 
   grid-template-areas: 
     ". Search ."
@@ -19,17 +19,7 @@ export const RoomContainer = styled.div`
     .queue { grid-area: Queue; }
 `;
 
-export const SongTitle = styled.div`
-  grid-area: title;
-  width: 100%;
-  height: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgb(18, 18, 19);
-  border-radius: 24px;
-  margin-top: 5%;
-  `;
+
 
 export const QueueContainer = styled.div`
   grid-area: Queue;

@@ -7,11 +7,11 @@ const Home: React.FC = () => {
   return (
     <HomeContainer>
     <RoomsContainer>
-      <Link to="/room/1">
-        <RoomButton>Room 1</RoomButton>
+      <Link to="/room/test">
+        <RoomButton>test</RoomButton>
       </Link>
-      <Link to="/room/2">
-        <RoomButton>Room 2</RoomButton>
+      <Link to="/room/music">
+        <RoomButton>music</RoomButton>
       </Link>
     </RoomsContainer>
   </HomeContainer>

@@ -6,12 +6,14 @@ import { RoomProvider, useRoomContext } from './RoomContext';
 import NoVideo from '../../components/noVideo/NoVideo';
 import Queue from '../../components/quene/Queue';
 import SongTitle from '../../components/songTitle/SongTitle';
+import TopBar from '../../components/topBar/TopBar';
 
 const RoomContent: React.FC = () => {
   const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player } = useRoomContext();
 
   return (
     <RoomContainer>
+      <TopBar />
       <SearchForm onSubmit={handleSearch}>
         <SearchBar
           type="text"

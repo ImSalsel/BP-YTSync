@@ -8,7 +8,7 @@ export const QueueContainer = styled.div`
   align-items: center;
   justify-content: flex-start;
   background-color: rgb(18, 18, 19);
-  padding: 10px;
+  padding: 10%;
   overflow-y: auto;
   border-radius: 24px;
 `;
