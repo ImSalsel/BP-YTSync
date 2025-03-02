@@ -1,10 +1,22 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import io, { Socket } from 'socket.io-client';
+import { YouTubePlayer } from 'react-youtube';
 
 interface Video {
   id: string;
   title: string;
   url: string;
+}
+
+interface Opts {
+  height: string;
+  width: string;
+  playerVars: {
+    autoplay: number;
+    controls: number;
+    showinfo: number;
+    modestbranding: number;
+  };
 }
 
 interface RoomContextProps {
@@ -13,6 +25,11 @@ interface RoomContextProps {
   setSearchTerm: (term: string) => void;
   handleSearch: (e: React.FormEvent<HTMLFormElement>) => void;
   removeSong: (index: number) => void;
+  socket: Socket | null;
+  opts: Opts;
+  onReady: (event: { target: YouTubePlayer }) => void;
+  handlePlayNextSong: ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => void;
+  videoId: string | null;
 }
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
@@ -29,6 +46,10 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [queue, setQueue] = useState<Video[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [volume] = useState(50);
+  const [, setPlayer] = useState<YouTubePlayer | null>(null);
+  const [videoId, setVideoId] = useState<string | null>(null);
+  const [elapsedTime, setElapsedTime] = useState<number | null>(null);
 
   useEffect(() => {
     const newSocket = io('http://localhost:4000');
@@ -39,8 +60,11 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setQueue(updatedQueue);
     });
 
+    newSocket.on('playNextSong', handlePlayNextSong);
+
     return () => {
       newSocket.off('queueUpdated');
+      newSocket.off('playNextSong');
       newSocket.close();
     };
   }, []);
@@ -59,8 +83,32 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const opts: Opts = {
+    height: '100%',
+    width: '100%',
+    playerVars: {
+      autoplay: 1,
+      controls: 0,
+      showinfo: 0,
+      modestbranding: 1,
+    },
+  };
+
+  const onReady = (event: { target: YouTubePlayer }) => {
+    setPlayer(event.target);
+    event.target.setVolume(volume);
+    if (elapsedTime !== null) {
+      event.target.seekTo(elapsedTime / 1000, true);
+    }
+  };
+
+  const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
+    setVideoId(video.id);
+    setElapsedTime(elapsedTime);
+  };
+
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId }}>
       {children}
     </RoomContext.Provider>
   );

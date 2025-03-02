@@ -8,27 +8,9 @@ import Queue from '../../components/quene/Queue';
 import SongTitle from '../../components/songTitle/SongTitle';
 
 const RoomContent: React.FC = () => {
-  const { queue, searchTerm, setSearchTerm, handleSearch } = useRoomContext();
+  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId } = useRoomContext();
   const [volume, setVolume] = useState(50);
-  const [player, setPlayer] = useState<YouTubePlayer | null>(null);
-
-  const videoId = queue.length > 0 ? queue[0].id : null;
-
-  const opts = {
-    height: '100%',
-    width: '100%',
-    playerVars: {
-      autoplay: 1,
-      controls: 0,
-      showinfo: 0,
-      modestbranding: 1,
-    },
-  };
-
-  const onReady = (event: { target: YouTubePlayer }) => {
-    setPlayer(event.target);
-    event.target.setVolume(volume);
-  };
+  const [player] = useState<YouTubePlayer | null>(null);
 
   return (
     <RoomContainer>

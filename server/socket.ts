@@ -4,6 +4,7 @@ import { Video } from './models/video';
 
 let queue: Video[] = [];
 let currentTimeout: NodeJS.Timeout | null = null;
+let startTime: number | null = null;
 
 const playNextSong = async (io: Server) => {
   if (queue.length > 0) {
@@ -16,12 +17,15 @@ const playNextSong = async (io: Server) => {
     console.log(`Ends in: ${videoDuration / 1000} seconds`);
 
     // Notify clients to play the next song
-    io.emit('playNextSong', currentVideo);
+    io.emit('playNextSong', { video: currentVideo, elapsedTime: 0 });
 
     // Clear the existing timeout if it exists
     if (currentTimeout) {
       clearTimeout(currentTimeout);
     }
+
+    // Set the start time
+    startTime = Date.now();
 
     // Set a timeout to remove the song after its duration
     currentTimeout = setTimeout(() => {
@@ -41,9 +45,11 @@ export const setupSocket = (io: Server) => {
     // Send the current queue to the newly connected client
     socket.emit('queueUpdated', queue);
 
-    // Send the current song to the newly connected client
-    if (queue.length > 0) {
-      socket.emit('playNextSong', queue[0]);
+    // Send the current song and elapsed time to the newly connected client
+    if (queue.length > 0 && startTime !== null) {
+      const currentVideo = queue[0];
+      const elapsedTime = Date.now() - startTime;
+      socket.emit('playNextSong', { video: currentVideo, elapsedTime });
     }
 
     socket.on('searchYouTube', async (query: string) => {
