@@ -33,3 +33,9 @@ export interface RoomContextProps {
   setVolume: (volume: number) => void;
   player: YouTubePlayer | null;
 }
+
+export interface Video {
+  id: string;
+  title: string;
+  url: string;
+}

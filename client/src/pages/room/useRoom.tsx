@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import io, { Socket } from 'socket.io-client';
+import { Video } from './types';
 
-interface Video {
-  id: string;
-  title: string;
-  url: string;
-}
+
 
 const useRoom = () => {
   const [queue, setQueue] = useState<Video[]>([]);
