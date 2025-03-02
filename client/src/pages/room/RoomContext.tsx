@@ -1,42 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
+import { RoomContextProps, Video, Opts } from './types';
 
-interface Video {
-  id: string;
-  title: string;
-  url: string;
-}
 
-interface Opts {
-  height: string;
-  width: string;
-  playerVars: {
-    autoplay: number;
-    controls: number;
-    showinfo: number;
-    modestbranding: number;
-  };
-}
-
-interface RoomContextProps {
-  queue: Video[];
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  handleSearch: (e: React.FormEvent<HTMLFormElement>) => void;
-  removeSong: (index: number) => void;
-  socket: Socket | null;
-  opts: Opts;
-  onReady: (event: { target: YouTubePlayer }) => void;
-  handlePlayNextSong: ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => void;
-  videoId: string | null;
-  volume: number;
-  setVolume: (volume: number) => void;
-  player: YouTubePlayer | null;
-}
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useRoomContext = () => {
   const context = useContext(RoomContext);
   if (!context) {

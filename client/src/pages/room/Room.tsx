@@ -1,5 +1,4 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
 import { RoomProvider, useRoomContext } from './RoomContext';
@@ -43,7 +42,6 @@ const RoomContent: React.FC = () => {
 };
 
 const Room: React.FC = () => {
-  const { roomId } = useParams<{ roomId: string }>();
 
   return (
     <RoomProvider>
