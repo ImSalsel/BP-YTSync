@@ -9,7 +9,10 @@ interface Room {
   users: Set<string>;
 }
 
-const rooms: { [roomId: string]: Room } = {};
+const rooms: { [roomId: string]: Room } = {
+  test: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
+  music: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
+};
 
 const playNextSong = async (io: Server, roomId: string) => {
   const room = rooms[roomId];
@@ -60,17 +63,38 @@ export const setupSocket = (io: Server) => {
       room.users.add(socket.id);
 
       // Emit the updated user count to the room
-      io.to(roomId).emit('userCountUpdated', room.users.size);
-      console.log('users updated', room.users.size);
+      io.to(roomId).emit('userCountUpdated', roomId, room.users.size);
+
       // Send the current queue to the newly connected client
       socket.emit('queueUpdated', room.queue);
-      
+
       // Send the current song and elapsed time to the newly connected client
       if (room.queue.length > 0 && room.startTime !== null) {
         const currentVideo = room.queue[0];
         const elapsedTime = Date.now() - room.startTime;
         socket.emit('playNextSong', { video: currentVideo, elapsedTime });
       }
+    });
+
+    socket.on('createRoom', (roomName: string) => {
+      if (!rooms[roomName]) {
+        rooms[roomName] = { queue: [], currentTimeout: null, startTime: null, users: new Set() };
+        console.log(`Room ${roomName} created`);
+      }
+
+      // Send the updated room list to all clients
+      io.emit('roomListUpdated', Object.keys(rooms).map(roomId => ({
+        name: roomId,
+        userCount: rooms[roomId].users.size
+      })));
+    });
+
+    socket.on('getRoomList', () => {
+      // Send the current room list to the client
+      socket.emit('roomListUpdated', Object.keys(rooms).map(roomId => ({
+        name: roomId,
+        userCount: rooms[roomId].users.size
+      })));
     });
 
     socket.on('searchYouTube', async (query: string, roomId: string) => {
@@ -107,7 +131,13 @@ export const setupSocket = (io: Server) => {
         const room = rooms[roomId];
         if (room.users.has(socket.id)) {
           room.users.delete(socket.id);
-          io.to(roomId).emit('userCountUpdated', room.users.size);
+          io.to(roomId).emit('userCountUpdated', roomId, room.users.size);
+
+          // Delete the room if it becomes empty and it's not a default room
+          if (room.users.size === 0 && roomId !== 'test' && roomId !== 'music') {
+            delete rooms[roomId];
+            console.log(`Room ${roomId} deleted`);
+          }
           break;
         }
       }

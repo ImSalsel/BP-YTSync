@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
-import { RoomContextProps, Video, Opts } from './types';
 import { useParams } from 'react-router-dom';
-
-
+import { RoomContextProps, Video, Opts } from './types';
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 
@@ -45,14 +43,14 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSocket(newSocket);
 
     newSocket.emit('joinRoom', roomId);
-    console.log('userCount', userCount);
 
     // Handle receiving the initial queue and updates to the queue
     newSocket.on('queueUpdated', handleQueueUpdated);
 
     newSocket.on('playNextSong', handlePlayNextSong);
 
-    newSocket.on('userCountUpdated', (count: number) => {
+    newSocket.on('userCountUpdated', (roomId: string, count: number) => {
+      console.log('userCountUpdated event received:', roomId, count); // Debug log
       setUserCount(count);
     });
 

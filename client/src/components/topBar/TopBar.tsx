@@ -13,6 +13,7 @@ const TopBar: React.FC = () => {
     navigate('/');
   };
 
+  console.log('userCount', userCount);
   return (
     <TopBarContainer>
       <HomeButton onClick={handleHomeClick}>🏠</HomeButton>
