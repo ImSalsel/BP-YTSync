@@ -26,6 +26,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [player, setPlayer] = useState<YouTubePlayer | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
+  const [userCount, setUserCount] = useState(0);
 
   const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
     setVideoId(video.id);
@@ -44,15 +45,21 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSocket(newSocket);
 
     newSocket.emit('joinRoom', roomId);
+    console.log('userCount', userCount);
 
     // Handle receiving the initial queue and updates to the queue
     newSocket.on('queueUpdated', handleQueueUpdated);
 
     newSocket.on('playNextSong', handlePlayNextSong);
 
+    newSocket.on('userCountUpdated', (count: number) => {
+      setUserCount(count);
+    });
+
     return () => {
       newSocket.off('queueUpdated', handleQueueUpdated);
       newSocket.off('playNextSong', handlePlayNextSong);
+      newSocket.off('userCountUpdated');
       newSocket.close();
     };
   }, [roomId]);
@@ -91,7 +98,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, userCount }}>
       {children}
     </RoomContext.Provider>
   );

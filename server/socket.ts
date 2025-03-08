@@ -6,6 +6,7 @@ interface Room {
   queue: Video[];
   currentTimeout: NodeJS.Timeout | null;
   startTime: number | null;
+  users: Set<string>;
 }
 
 const rooms: { [roomId: string]: Room } = {};
@@ -52,14 +53,18 @@ export const setupSocket = (io: Server) => {
       console.log(`Client ${socket.id} joined room ${roomId}`);
 
       if (!rooms[roomId]) {
-        rooms[roomId] = { queue: [], currentTimeout: null, startTime: null };
+        rooms[roomId] = { queue: [], currentTimeout: null, startTime: null, users: new Set() };
       }
 
       const room = rooms[roomId];
+      room.users.add(socket.id);
 
+      // Emit the updated user count to the room
+      io.to(roomId).emit('userCountUpdated', room.users.size);
+      console.log('users updated', room.users.size);
       // Send the current queue to the newly connected client
       socket.emit('queueUpdated', room.queue);
-
+      
       // Send the current song and elapsed time to the newly connected client
       if (room.queue.length > 0 && room.startTime !== null) {
         const currentVideo = room.queue[0];
@@ -97,6 +102,15 @@ export const setupSocket = (io: Server) => {
 
     socket.on('disconnect', () => {
       console.log('Client disconnected', socket.id);
+
+      for (const roomId in rooms) {
+        const room = rooms[roomId];
+        if (room.users.has(socket.id)) {
+          room.users.delete(socket.id);
+          io.to(roomId).emit('userCountUpdated', room.users.size);
+          break;
+        }
+      }
     });
   });
 };

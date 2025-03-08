@@ -32,6 +32,7 @@ export interface RoomContextProps {
   volume: number;
   setVolume: (volume: number) => void;
   player: YouTubePlayer | null;
+  userCount: number;
 }
 
 export interface Video {

@@ -26,3 +26,8 @@ export const RoomName = styled.div`
   font-size: 18px;
   margin-left: 10px;
 `;
+
+export const UserCount = styled.div`
+  font-size: 16px;
+  margin-left: 100px;
+`;
