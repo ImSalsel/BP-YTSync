@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
 import { RoomContextProps, Video, Opts } from './types';
+import { useParams } from 'react-router-dom';
 
 
 
@@ -17,6 +18,7 @@ export const useRoomContext = () => {
 };
 
 export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { roomId } = useParams<{ roomId: string }>();
   const [queue, setQueue] = useState<Video[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -41,6 +43,8 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const newSocket = io('http://localhost:4000');
     setSocket(newSocket);
 
+    newSocket.emit('joinRoom', roomId);
+
     // Handle receiving the initial queue and updates to the queue
     newSocket.on('queueUpdated', handleQueueUpdated);
 
@@ -51,19 +55,19 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       newSocket.off('playNextSong', handlePlayNextSong);
       newSocket.close();
     };
-  }, []);
+  }, [roomId]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (socket) {
-      socket.emit('searchYouTube', searchTerm);
+      socket.emit('searchYouTube', searchTerm, roomId);
     }
     setSearchTerm('');
   };
 
   const removeSong = (index: number) => {
     if (socket) {
-      socket.emit('removeSong', index);
+      socket.emit('removeSong', index, roomId);
     }
   };
 
