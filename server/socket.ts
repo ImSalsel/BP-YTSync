@@ -16,6 +16,11 @@ const rooms: { [roomId: string]: Room } = {
 
 const playNextSong = async (io: Server, roomId: string) => {
   const room = rooms[roomId];
+  if (!room) {
+    console.error(`Room ${roomId} does not exist`);
+    return;
+  }
+
   if (room.queue.length > 0) {
     const currentVideo = room.queue[0];
     const videoDetails = await getVideoDetails(currentVideo.id);
