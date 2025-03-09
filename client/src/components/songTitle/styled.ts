@@ -15,7 +15,13 @@ export const SongTitleContainer = styled.div`
   left: 10%;
   padding: 10px;
   color: white;
-  font-size: 16px;
-  z-index: 1000;
+  gap: 10px;
+
 `;
 
+export const SongTitleText = styled.div`
+  width: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  white-space: nowrap;
+`;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { SongTitleContainer } from './styled';
+import { SongTitleContainer, SongTitleText } from './styled';
 import { useRoomContext } from '../../pages/room/RoomContext';
 import VolumeControl from '../volumeControl/VolumeControl';
 import { YouTubePlayer } from 'react-youtube';
@@ -18,12 +18,13 @@ const SongTitle: React.FC<SongTitleProps> = ({ volume, setVolume, player }) => {
   return (
     <SongTitleContainer>
       {currentSong ? (
-        <div>{currentSong.title}</div>
+        <SongTitleText>{currentSong.title}</SongTitleText>
       ) : (
-        <div>No song playing</div>
+        <SongTitleText>No song playing</SongTitleText>
       )}
-      <VolumeControl volume={volume} setVolume={setVolume} player={player} />
+      
       <TimeBar />
+      <VolumeControl volume={volume} setVolume={setVolume} player={player} />
     </SongTitleContainer>
   );
 };
