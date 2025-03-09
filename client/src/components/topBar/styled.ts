@@ -28,6 +28,12 @@ export const RoomName = styled.div`
 `;
 
 export const UserCount = styled.div`
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
   margin-left: 100px;
+  svg {
+    margin-left: 5px;
+  }
 `;
