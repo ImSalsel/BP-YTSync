@@ -96,7 +96,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, userCount }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, elapsedTime, userCount }}>
       {children}
     </RoomContext.Provider>
   );

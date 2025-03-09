@@ -3,6 +3,7 @@ import { SongTitleContainer } from './styled';
 import { useRoomContext } from '../../pages/room/RoomContext';
 import VolumeControl from '../volumeControl/VolumeControl';
 import { YouTubePlayer } from 'react-youtube';
+import TimeBar from '../timeBar/TimeBar';
 
 interface SongTitleProps {
   volume: number;
@@ -22,6 +23,7 @@ const SongTitle: React.FC<SongTitleProps> = ({ volume, setVolume, player }) => {
         <div>No song playing</div>
       )}
       <VolumeControl volume={volume} setVolume={setVolume} player={player} />
+      <TimeBar />
     </SongTitleContainer>
   );
 };
