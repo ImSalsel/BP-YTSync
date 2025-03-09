@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 
 
 export const SongTitleContainer = styled.div`
-  width: 50%;
+  width: 55%;
   height: 50px;
   display: flex;
   align-items: center;

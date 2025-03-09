@@ -1,6 +1,8 @@
-import React from 'react';
-import { VolumeSlider } from './styled';
+import React, { useState } from 'react';
+import { VolumeSlider, VolumeIconWrapper, VolumeControlWrapper } from './styled';
 import { YouTubePlayer } from 'react-youtube';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
 
 interface VolumeControlProps {
   volume: number;
@@ -9,6 +11,8 @@ interface VolumeControlProps {
 }
 
 const VolumeControl: React.FC<VolumeControlProps> = ({ volume, setVolume, player }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = Number(event.target.value);
     setVolume(newVolume);
@@ -17,14 +21,32 @@ const VolumeControl: React.FC<VolumeControlProps> = ({ volume, setVolume, player
     }
   };
 
+  const toggleMute = () => {
+    const newVolume = volume === 0 ? 100 : 0;
+    setVolume(newVolume);
+    if (player && typeof player.setVolume === 'function') {
+      player.setVolume(newVolume);
+    }
+  };
+
   return (
-    <VolumeSlider
-      type="range"
-      min="0"
-      max="100"
-      value={volume}
-      onChange={handleVolumeChange}
-    />
+    <VolumeControlWrapper
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <VolumeIconWrapper onClick={toggleMute}>
+        {volume === 0 ? <VolumeMuteIcon /> : <VolumeUpIcon />}
+      </VolumeIconWrapper>
+      {isHovered && (
+        <VolumeSlider
+          type="range"
+          min="0"
+          max="100"
+          value={volume}
+          onChange={handleVolumeChange}
+        />
+      )}
+    </VolumeControlWrapper>
   );
 };
 
