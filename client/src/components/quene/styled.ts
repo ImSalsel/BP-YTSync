@@ -1,27 +1,52 @@
-import { styled } from "styled-components";
+import styled from 'styled-components';
 
 export const QueueContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   height: 100%;
-  align-items: center;
-  justify-content: flex-start;
+  padding: 20px;
   background-color: rgb(18, 18, 19);
-  padding: 10%;
-  overflow-y: auto;
-  border-radius: 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 export const Song = styled.div`
   display: flex;
-  flex-direction: row;
-  width: 95%;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
   padding: 10px;
   margin: 5px 0;
-  align-items: center;
-  justify-content: space-between;
-  background-color: rgb(50, 50, 50);
-  color: white;
-  border-radius: 12px;
+  background-color: #2a2a2a;
+  border-radius: 5px;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #333;
+  }
+
+  div {
+    flex: 1;
+    text-align: left;
+  }
+
+  button {
+    background-color: #333;
+    color: #fff;
+    border: solid white;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #2a2a2a;
+    }
+  }
 `;
