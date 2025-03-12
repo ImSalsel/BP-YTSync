@@ -25,11 +25,11 @@ export const VolumeControlWrapper = styled.div`
 
 export const VolumeIconWrapper = styled.div`
   position: absolute;
-  bottom: 0;
+  bottom: 2%;
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
   &:hover {
-    color:rgb(22, 82, 143); 
+    color:rgb(30, 45, 200); 
   }
 `;

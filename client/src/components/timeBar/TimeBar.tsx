@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRoomContext } from '../../pages/room/RoomContext';
-import { TimeBarContainer, ProgressBar, TimeText, ProgressBarFull, ProgressIndicator, ZapEffect } from './styled';
+import { TimeBarContainer, ProgressBar, TimeText, ProgressBarFull, ProgressIndicator } from './styled';
 
 const TimeBar: React.FC = () => {
   const { elapsedTime, player } = useRoomContext();
@@ -32,8 +32,6 @@ const TimeBar: React.FC = () => {
     <TimeBarContainer>
       <TimeText>{formatTime(currentTime)} / {formatTime(player?.getDuration() * 1000 || 0)}</TimeText>
       <ProgressBarFull></ProgressBarFull>
-      <ZapEffect style={{ left: `${progress}%` }} />
-
       <ProgressIndicator style={{ left: `${progress}%` }} />
       <ProgressBar style={{ width: `${progress}%` }} />
     </TimeBarContainer>

@@ -10,7 +10,7 @@ interface Room {
 }
 
 const rooms: { [roomId: string]: Room } = {
-  test: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
+  Rave_in_the_grave: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
   music: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
 };
 
@@ -139,7 +139,7 @@ export const setupSocket = (io: Server) => {
           io.to(roomId).emit('userCountUpdated', roomId, room.users.size);
 
           // Delete the room if it becomes empty and it's not a default room
-          if (room.users.size === 0 && roomId !== 'test' && roomId !== 'music') {
+          if (room.users.size === 0 && roomId !== 'Rave_in_the_grave' && roomId !== 'music') {
             delete rooms[roomId];
             console.log(`Room ${roomId} deleted`);
           }

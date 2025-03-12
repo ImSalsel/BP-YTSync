@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import DecryptedText from '../decryptedText/DecryptedText';
 
 const NoVideoContainer = styled.div`
   display: flex;
@@ -17,7 +18,12 @@ const NoVideoContainer = styled.div`
 const NoVideo: React.FC = () => {
   return (
     <NoVideoContainer>
-      No video in the queue
+      <DecryptedText
+        speed={100}
+        text=" No video in the queue"
+        animateOn="view"
+        revealDirection="center"
+      />
     </NoVideoContainer>
   );
 };

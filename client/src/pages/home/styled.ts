@@ -12,13 +12,15 @@ export const HomeContainer = styled.div`
 export const RoomsContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 5%;
+  margin-top: 0%;
   width: 80%;
-  height: 80%;
+  height: 40%;
   border-radius: 24px;
   align-items: space-between;
   gap: 20px;
   background-color: rgb(18, 18, 19);
+  padding: 20px;
+  z-index: 1;
 `;
 
 export const RoomTile = styled.div`
@@ -58,6 +60,7 @@ export const Modal = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 `;
 
 export const ModalContent = styled.div`
@@ -66,6 +69,7 @@ export const ModalContent = styled.div`
   border-radius: 10px;
   width: 300px;
   text-align: center;
+
 `;
 
 export const CloseButton = styled.button`
@@ -82,6 +86,7 @@ export const CreateRoomForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 1;
 `;
 
 export const CreateRoomInput = styled.input`
@@ -104,4 +109,17 @@ export const CreateRoomButton = styled.button`
   &:hover {
     background-color: #218838;
   }
+`;
+
+export const Logo = styled.img`
+  width: 250px; /* Adjust the size as needed */
+  height: 250px; /* Adjust the size as needed */
+  margin-top: 5%;
+`;
+
+export const RoomTitle = styled.div`
+  font-size: 42px;
+  margin-bottom: 20px;
+  color: white;
+  z-index: 1;
 `;

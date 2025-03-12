@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, {  } from 'styled-components';
 
 export const TimeBarContainer = styled.div`
   width: 50%;
@@ -49,29 +49,3 @@ export const TimeText = styled.div`
   color: #333;
 `;
 
-const zap = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateX(0);
-  }
-  50% {
-    opacity: 1;
-    transform: translateX(5px);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(10px);
-  }
-`;
-
-export const ZapEffect = styled.div`
-  width: 10px;
-  height: 10px;
-  background-color: yellow; /* Color for the zapping effect */
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 50%; /* Make it a circle */
-  animation: ${zap} 0.5s infinite; /* Adjust the duration as needed */
-  z-index: 10;
-`;

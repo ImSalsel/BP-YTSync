@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { HomeContainer, RoomTile, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton } from './styled';
+import { HomeContainer, RoomTile, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle } from './styled';
 import { Link, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import config from '../../config';
-
+import homeIcon from '../../assets/homeIcon.svg';
+import PixelTransition from '../../components/pixelTransition/PixelTransition';
+import DecryptedText from '../../components/decryptedText/DecryptedText';
+import Waves from '../../components/waves/Waves';
 const Home: React.FC = () => {
   const [newRoom, setNewRoom] = useState('');
   const [rooms, setRooms] = useState<{ name: string, userCount: number }[]>([]);
@@ -14,19 +17,19 @@ const Home: React.FC = () => {
     const socket = io(config.SOCKET_ADDRESS, {
       transports: ["websocket", "polling"],
       withCredentials: true
-  });
+    });
   
-  socket.on('connect', () => {
-    console.log('Connected to server');
-  });
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
 
-  socket.on('connect_error', (error) => {
-    console.error('Connection error:', error);
-  });
+    socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+    });
 
-  socket.on('disconnect', (reason) => {
-    console.warn('Disconnected from server:', reason);
-  });
+    socket.on('disconnect', (reason) => {
+      console.warn('Disconnected from server:', reason);
+    });
 
     socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
       setRooms(updatedRooms);
@@ -69,6 +72,50 @@ const Home: React.FC = () => {
 
   return (
     <HomeContainer>
+
+<Waves
+  lineColor="#fff"
+  backgroundColor="rgb(31, 29, 32)"
+  waveSpeedX={0.02}
+  waveSpeedY={0.01}
+  waveAmpX={40}
+  waveAmpY={20}
+  friction={0.9}
+  tension={0.01}
+  maxCursorMove={120}
+  xGap={12}
+  yGap={36}
+/>
+
+      <PixelTransition
+  firstContent={
+    <img
+      src={homeIcon}
+      alt="default pixel transition content, a cat!"
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  }
+  secondContent={    <div
+    style={{
+      width: "100%",
+      height: "100%",
+      display: "grid",
+      placeItems: "center",
+      backgroundColor: "rgb(31, 29, 32)"
+    }}
+  >
+    <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>uWu</p>
+  </div>
+}
+  gridSize={12}
+  pixelColor='rgb(18, 18, 19)'
+  animationStepDuration={0.4}
+/>
+      <RoomTitle><DecryptedText
+  text="SalselDJ"
+  animateOn="view"
+  revealDirection="center"
+/></RoomTitle>
       <RoomsContainer>
         {rooms.map(room => (
           <Link key={room.name} to={`/room/${room.name}`}>
@@ -95,6 +142,7 @@ const Home: React.FC = () => {
           </ModalContent>
         </Modal>
       )}
+      
     </HomeContainer>
   );
 };
