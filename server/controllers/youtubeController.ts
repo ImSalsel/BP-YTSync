@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { Video } from '../models/video';
+import dotenv from 'dotenv';
+dotenv.config(); 
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 

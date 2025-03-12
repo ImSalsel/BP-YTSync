@@ -3,7 +3,7 @@ import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
 import { useParams } from 'react-router-dom';
 import { RoomContextProps, Video, Opts } from './types';
-
+import config from '../../config';
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -26,6 +26,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const [userCount, setUserCount] = useState(0);
 
+
   const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
     setVideoId(video.id);
     setElapsedTime(elapsedTime);
@@ -39,7 +40,10 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
-    const newSocket = io('http://localhost:4000');
+    const newSocket = io(config.SOCKET_ADDRESS, {
+      transports: ["websocket", "polling"],
+      withCredentials: true
+  });
     setSocket(newSocket);
 
     newSocket.emit('joinRoom', roomId);

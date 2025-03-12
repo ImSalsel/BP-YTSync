@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { Video } from './types';
+import config from '../../config';
 
 
 
@@ -10,7 +11,10 @@ const useRoom = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:4000');
+    const newSocket = io(config.SOCKET_ADDRESS, {
+      transports: ["websocket", "polling"],
+      withCredentials: true
+  });
     setSocket(newSocket);
 
     // Handle receiving the initial queue and updates to the queue

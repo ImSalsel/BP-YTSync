@@ -15,9 +15,10 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173', 
+    origin: process.env.FRONTEND_ADDRESS, 
     methods: ['GET', 'POST'],
   },
+  transports: ["websocket", "polling"] // Ensure both transports are enabled
 });
 
 app.use(cors());

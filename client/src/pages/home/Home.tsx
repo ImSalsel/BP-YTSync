@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { HomeContainer, RoomTile, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton } from './styled';
 import { Link, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
+import config from '../../config';
 
 const Home: React.FC = () => {
   const [newRoom, setNewRoom] = useState('');
@@ -10,8 +11,22 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const socket = io('http://localhost:4000');
-    console.log('connected to server');
+    const socket = io(config.SOCKET_ADDRESS, {
+      transports: ["websocket", "polling"],
+      withCredentials: true
+  });
+  
+  socket.on('connect', () => {
+    console.log('Connected to server');
+  });
+
+  socket.on('connect_error', (error) => {
+    console.error('Connection error:', error);
+  });
+
+  socket.on('disconnect', (reason) => {
+    console.warn('Disconnected from server:', reason);
+  });
 
     socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
       setRooms(updatedRooms);
@@ -33,7 +48,7 @@ const Home: React.FC = () => {
     e.preventDefault();
     if (newRoom.trim()) {
       const roomName = newRoom.trim();
-      const socket = io('http://localhost:4000');
+      const socket = io(config.SOCKET_ADDRESS);
       socket.emit('createRoom', roomName);
       socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
         setRooms(updatedRooms);
