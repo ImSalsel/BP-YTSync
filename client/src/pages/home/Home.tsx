@@ -6,7 +6,7 @@ import config from '../../config';
 import homeIcon from '../../assets/homeIcon.svg';
 import PixelTransition from '../../components/pixelTransition/PixelTransition';
 import DecryptedText from '../../components/decryptedText/DecryptedText';
-import Waves from '../../components/waves/Waves';
+import Particles from '../../components/particles/Particles';
 const Home: React.FC = () => {
   const [newRoom, setNewRoom] = useState('');
   const [rooms, setRooms] = useState<{ name: string, userCount: number }[]>([]);
@@ -73,19 +73,18 @@ const Home: React.FC = () => {
   return (
     <HomeContainer>
 
-<Waves
-  lineColor="#fff"
-  backgroundColor="rgb(31, 29, 32)"
-  waveSpeedX={0.02}
-  waveSpeedY={0.01}
-  waveAmpX={40}
-  waveAmpY={20}
-  friction={0.9}
-  tension={0.01}
-  maxCursorMove={120}
-  xGap={12}
-  yGap={36}
-/>
+
+  <Particles
+    particleColors={['#ffffff', '#ffffff']}
+    particleCount={200}
+    particleSpread={10}
+    speed={0.1}
+    particleBaseSize={100}
+    moveParticlesOnHover={false}
+    alphaParticles={false}
+    disableRotation={false}
+  />
+
 
       <PixelTransition
   firstContent={
@@ -101,7 +100,7 @@ const Home: React.FC = () => {
       height: "100%",
       display: "grid",
       placeItems: "center",
-      backgroundColor: "rgb(31, 29, 32)"
+      backgroundColor: "rgb(18, 18, 19)"
     }}
   >
     <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>uWu</p>

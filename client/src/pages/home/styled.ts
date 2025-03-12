@@ -6,7 +6,7 @@ export const HomeContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: rgb(31, 29, 32);
+  background-color: rgb(18, 18, 19);
 `;
 
 export const RoomsContainer = styled.div`
@@ -18,13 +18,13 @@ export const RoomsContainer = styled.div`
   border-radius: 24px;
   align-items: space-between;
   gap: 20px;
-  background-color: rgb(18, 18, 19);
+  background-color: rgb(31, 29, 32);
   padding: 20px;
   z-index: 1;
 `;
 
 export const RoomTile = styled.div`
-  background-color: #007bff;
+  background-color: rgb(18, 18, 19);
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -123,3 +123,4 @@ export const RoomTitle = styled.div`
   color: white;
   z-index: 1;
 `;
+
