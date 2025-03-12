@@ -25,7 +25,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [videoId, setVideoId] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const [userCount, setUserCount] = useState(0);
-
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
     setVideoId(video.id);
@@ -43,7 +43,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const newSocket = io(config.SOCKET_ADDRESS, {
       transports: ["websocket", "polling"],
       withCredentials: true
-  });
+    });
     setSocket(newSocket);
 
     newSocket.emit('joinRoom', roomId);
@@ -69,7 +69,13 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (socket) {
-      socket.emit('searchYouTube', searchTerm, roomId);
+      socket.emit('searchYouTube', searchTerm, roomId, (error: string | null) => {
+        if (error) {
+          setErrorMessage(error);
+        } else {
+          setErrorMessage(null);
+        }
+      });
     }
     setSearchTerm('');
   };
@@ -100,7 +106,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, elapsedTime, userCount }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, elapsedTime, userCount, errorMessage }}>
       {children}
     </RoomContext.Provider>
   );

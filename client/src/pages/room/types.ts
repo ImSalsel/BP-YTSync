@@ -34,6 +34,7 @@ export interface RoomContextProps {
   player: YouTubePlayer | null;
   userCount: number;
   elapsedTime: number | null;
+  errorMessage: string | null;
 }
 
 export interface Video {

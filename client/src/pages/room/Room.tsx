@@ -6,9 +6,10 @@ import NoVideo from '../../components/noVideo/NoVideo';
 import Queue from '../../components/quene/Queue';
 import SongTitle from '../../components/songTitle/SongTitle';
 import TopBar from '../../components/topBar/TopBar';
+import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 
 const RoomContent: React.FC = () => {
-  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player } = useRoomContext();
+  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player, errorMessage } = useRoomContext();
 
   return (
     <RoomContainer>
@@ -21,6 +22,7 @@ const RoomContent: React.FC = () => {
           placeholder="Search for a video or paste a YouTube link..."
         />
       </SearchForm>
+      {errorMessage && <ErrorMessage message={errorMessage} />}
       <VideoPlayer>
         {videoId ? (
           <YouTube
@@ -42,7 +44,6 @@ const RoomContent: React.FC = () => {
 };
 
 const Room: React.FC = () => {
-
   return (
     <RoomProvider>
       <RoomContent />
