@@ -1,5 +1,13 @@
-import { styled } from "styled-components";
+import { keyframes, styled } from "styled-components";
 
+const scroll = keyframes`
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+`;
 
 export const SongTitleContainer = styled.div`
   width: 55%;
@@ -16,12 +24,26 @@ export const SongTitleContainer = styled.div`
   padding: 10px;
   color: white;
   gap: 10px;
-
+  font-size: 20px;
 `;
 
 export const SongTitleText = styled.div`
-  width: 50%;
-  font-size: 24px;
-  font-weight: bold;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+`;
+
+export const ScrollingText = styled.div`
+  display: inline-block;
+  white-space: nowrap;
+  animation: ${scroll} 10s linear infinite;
+`;
+
+export const StaticText = styled.div`
+  display: inline-block;
   white-space: nowrap;
 `;

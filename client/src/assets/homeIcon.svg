@@ -1,0 +1,23 @@
+<svg 
+    width="150" 
+    height="150" 
+    viewBox="0 0 24 24" 
+    fill="white" 
+    xmlns="http://www.w3.org/2000/svg"
+    stroke="black" 
+    stroke-width="2" 
+    stroke-linecap="round" 
+    stroke-linejoin="round">
+    
+    <!-- Outer circle (radio/music device) -->
+    <circle cx="12" cy="12" r="10" stroke="black" fill="black"/>
+
+    <!-- Wave-like circle effect -->
+    <path d="M2,12 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0" stroke="white" fill="none" stroke-dasharray="4,2"/>
+
+    <!-- Headphones (Properly Centered) -->
+    <path d="M8 13a4 4 0 0 1 8 0" stroke="white" fill="none"/>
+    <rect x="6.5" y="13" width="3" height="4" fill="white"/>
+    <rect x="14.5" y="13" width="3" height="4" fill="white"/>
+
+</svg>

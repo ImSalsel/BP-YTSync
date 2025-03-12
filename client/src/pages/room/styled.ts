@@ -6,7 +6,7 @@ export const RoomContainer = styled.div`
   background-color: rgb(31, 29, 32);
   display: grid; 
   grid-template-columns: 5% 65% 25%; 
-  grid-template-rows: 20% 60% 15%; 
+  grid-template-rows: 23% 60% 15%; 
   gap: 0px 2%; 
   grid-template-areas: 
     ". Search ."
@@ -39,6 +39,7 @@ export const VideoPlayer = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 24px;
+  position: relative;
 
 `;
 
@@ -56,4 +57,14 @@ export const SearchBar = styled.input`
   font-size: 1.2rem;
   border: none;
   border-radius: 24px;
+`;
+
+export const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0); /* Transparent background */
+  z-index: 1; /* Ensure the overlay is above the video player */
 `;

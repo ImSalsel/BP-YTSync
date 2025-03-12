@@ -20,6 +20,11 @@ export const HomeButton = styled.button`
   color: white;
   font-size: 24px;
   cursor: pointer;
+
+  img {
+    width: 48px; // Adjust the width as needed
+    height: 48px; // Adjust the height as needed
+  }
 `;
 
 export const RoomName = styled.div`

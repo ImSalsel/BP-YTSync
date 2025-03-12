@@ -30,6 +30,6 @@ export const VolumeIconWrapper = styled.div`
   transform: translateX(-50%);
   cursor: pointer;
   &:hover {
-    color: #0073e6; 
+    color:rgb(22, 82, 143); 
   }
 `;
