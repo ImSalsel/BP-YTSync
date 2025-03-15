@@ -102,6 +102,11 @@ export const setupSocket = (io: Server) => {
       })));
     });
 
+    socket.on('checkRoomExists', (roomId: string) => {
+      const roomExists = !!rooms[roomId];
+      socket.emit('roomExists', roomExists);
+    });
+
     socket.on('searchYouTube', async (query: string, roomId: string) => {
       const newVideo = await searchYouTube(query);
       if (newVideo) {

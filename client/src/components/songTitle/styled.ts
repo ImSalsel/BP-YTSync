@@ -25,6 +25,12 @@ export const SongTitleContainer = styled.div`
   color: white;
   gap: 10px;
   font-size: 20px;
+
+  @media (max-width: 1000px) {
+    width: 80%; 
+    left: 0%;
+    margin-left: 10%;
+  }
 `;
 
 export const SongTitleText = styled.div`

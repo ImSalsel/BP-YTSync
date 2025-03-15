@@ -10,13 +10,14 @@ export const QueueContainer = styled.div`
   background-color: rgb(18, 18, 19);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
 `;
 
 export const Song = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: 95%;
   padding: 10px;
   margin: 5px 0;
   background-color: #2a2a2a;

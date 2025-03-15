@@ -6,6 +6,7 @@ export const TopBarContainer = styled.div`
   left: 0;
   width: 100%;
   height: 50px;
+  padding-top: 5px;
   display: flex;
   align-items: center;
   background-color: rgb(18, 18, 19);

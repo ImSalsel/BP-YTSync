@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { RoomContextProps, Video, Opts } from './types';
 import config from '../../config';
+
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -17,6 +18,7 @@ export const useRoomContext = () => {
 
 export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { roomId } = useParams<{ roomId: string }>();
+  const navigate = useNavigate();
   const [queue, setQueue] = useState<Video[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -46,7 +48,15 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
     setSocket(newSocket);
 
-    newSocket.emit('joinRoom', roomId);
+    newSocket.emit('checkRoomExists', roomId);
+
+    newSocket.on('roomExists', (exists: boolean) => {
+      if (!exists) {
+        navigate('/');
+      } else {
+        newSocket.emit('joinRoom', roomId);
+      }
+    });
 
     // Handle receiving the initial queue and updates to the queue
     newSocket.on('queueUpdated', handleQueueUpdated);
@@ -64,7 +74,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       newSocket.off('userCountUpdated');
       newSocket.close();
     };
-  }, [roomId]);
+  }, [roomId, navigate]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

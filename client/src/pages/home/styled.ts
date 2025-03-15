@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 export const HomeContainer = styled.div`
@@ -30,6 +31,10 @@ export const RoomsContainer = styled.div`
   }
 `;
 
+export const StyledLink = styled(Link)`
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit text color */
+`;
 
 
 export const AddRoomTile = styled.div`

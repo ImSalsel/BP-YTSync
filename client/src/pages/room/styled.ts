@@ -6,7 +6,7 @@ export const RoomContainer = styled.div`
   background-color: rgb(31, 29, 32);
   display: grid; 
   grid-template-columns: 5% 65% 25%; 
-  grid-template-rows: 23% 60% 15%; 
+  grid-template-rows: 25% 60% 15%; 
   gap: 0px 2%; 
   grid-template-areas: 
     ". Search ."
@@ -28,6 +28,12 @@ export const QueueContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 1000px) {
+    width: 100%; 
+    margin-right: 0%;
+    
+  }
 `;
 
 export const VideoPlayer = styled.div`
@@ -41,6 +47,12 @@ export const VideoPlayer = styled.div`
   border-radius: 24px;
   position: relative;
 
+  @media (max-width: 1000px) {
+    width: 80%; 
+    left: 0%;
+    margin-left: 10%;
+  }
+
 `;
 
 export const SearchForm = styled.form`
@@ -52,7 +64,7 @@ export const SearchForm = styled.form`
 
 export const SearchBar = styled.input`
   width: 80%;
-  height: 30%;
+  height: 25%;
   padding: 10px;
   font-size: 1.2rem;
   border: none;
@@ -65,6 +77,6 @@ export const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0); /* Transparent background */
-  z-index: 1; /* Ensure the overlay is above the video player */
+  background: rgba(0, 0, 0, 0); 
+  z-index: 1; 
 `;
