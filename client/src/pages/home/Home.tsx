@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { HomeContainer, RoomTile, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle } from './styled';
+import React, { useState, useEffect, useMemo } from 'react';
+import { HomeContainer, RoomTile, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle, ButtonContainer } from './styled';
 import { Link, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import config from '../../config';
@@ -7,6 +7,8 @@ import homeIcon from '../../assets/homeIcon.svg';
 import PixelTransition from '../../components/pixelTransition/PixelTransition';
 import DecryptedText from '../../components/decryptedText/DecryptedText';
 import Particles from '../../components/particles/Particles';
+
+
 const Home: React.FC = () => {
   const [newRoom, setNewRoom] = useState('');
   const [rooms, setRooms] = useState<{ name: string, userCount: number }[]>([]);
@@ -47,15 +49,19 @@ const Home: React.FC = () => {
     };
   }, []);
 
+  const sanitizeInput = (input: string) => {
+    return input.replace(/[^a-zA-Z0-9 ]/g, ''); // Remove special characters
+  };
+
   const handleCreateRoom = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newRoom.trim()) {
-      const roomName = newRoom.trim();
+    const sanitizedRoomName = sanitizeInput(newRoom.trim());
+    if (sanitizedRoomName) {
       const socket = io(config.SOCKET_ADDRESS);
-      socket.emit('createRoom', roomName);
+      socket.emit('createRoom', sanitizedRoomName);
       socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
         setRooms(updatedRooms);
-        navigate(`/room/${roomName}`);
+        navigate(`/room/${sanitizedRoomName}`);
       });
       setNewRoom('');
       setIsModalOpen(false);
@@ -68,53 +74,55 @@ const Home: React.FC = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setNewRoom('');
   };
+
+  const particlesProps = useMemo(() => ({
+    particleColors: ['#ffffff', '#ffffff'],
+    particleCount: 200,
+    particleSpread: 10,
+    speed: 0.1,
+    particleBaseSize: 100,
+    moveParticlesOnHover: false,
+    alphaParticles: false,
+    disableRotation: false,
+  }), []);
 
   return (
     <HomeContainer>
-
-
-  <Particles
-    particleColors={['#ffffff', '#ffffff']}
-    particleCount={200}
-    particleSpread={10}
-    speed={0.1}
-    particleBaseSize={100}
-    moveParticlesOnHover={false}
-    alphaParticles={false}
-    disableRotation={false}
-  />
-
-
+      <Particles {...particlesProps} />
       <PixelTransition
-  firstContent={
-    <img
-      src={homeIcon}
-      alt="default pixel transition content, a cat!"
-      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-    />
-  }
-  secondContent={    <div
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "grid",
-      placeItems: "center",
-      backgroundColor: "rgb(18, 18, 19)"
-    }}
-  >
-    <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>uWu</p>
-  </div>
-}
-  gridSize={12}
-  pixelColor='rgb(18, 18, 19)'
-  animationStepDuration={0.4}
-/>
-      <RoomTitle><DecryptedText
-  text="SalselDJ"
-  animateOn="view"
-  revealDirection="center"
-/></RoomTitle>
+        firstContent={
+          <img
+            src={homeIcon}
+            alt="default pixel transition content, a cat!"
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        }
+        secondContent={
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "grid",
+              placeItems: "center",
+              backgroundColor: "rgb(18, 18, 19)"
+            }}
+          >
+            <p style={{ fontWeight: 900, fontSize: "3rem", color: "#ffffff" }}>uWu</p>
+          </div>
+        }
+        gridSize={12}
+        pixelColor='rgb(18, 18, 19)'
+        animationStepDuration={0.4}
+      />
+      <RoomTitle>
+        <DecryptedText
+          text="SalselDJ"
+          animateOn="view"
+          revealDirection="center"
+        />
+      </RoomTitle>
       <RoomsContainer>
         {rooms.map(room => (
           <Link key={room.name} to={`/room/${room.name}`}>
@@ -128,20 +136,22 @@ const Home: React.FC = () => {
       {isModalOpen && (
         <Modal>
           <ModalContent>
-            <CloseButton onClick={closeModal}>×</CloseButton>
             <CreateRoomForm onSubmit={handleCreateRoom}>
               <CreateRoomInput
                 type="text"
                 value={newRoom}
-                onChange={(e) => setNewRoom(e.target.value)}
+                onChange={(e) => setNewRoom(sanitizeInput(e.target.value))}
                 placeholder="Enter room name"
+                maxLength={20} // Set character limit
               />
-              <CreateRoomButton type="submit">Create Room</CreateRoomButton>
+              <ButtonContainer>
+                <CreateRoomButton type="submit">Create Room</CreateRoomButton>
+                <CloseButton onClick={closeModal}>Cancel</CloseButton>
+              </ButtonContainer>
             </CreateRoomForm>
           </ModalContent>
         </Modal>
       )}
-      
     </HomeContainer>
   );
 };
