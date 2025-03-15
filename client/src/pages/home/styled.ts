@@ -22,6 +22,12 @@ export const RoomsContainer = styled.div`
   padding: 20px;
   z-index: 1;
   overflow-y: auto;
+
+  @media (max-width: 1000px) {
+    width: 90%; 
+    padding-left: 5%; 
+    padding-right: 5%; 
+  }
 `;
 
 
