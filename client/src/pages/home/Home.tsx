@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { HomeContainer, RoomTile, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle, ButtonContainer } from './styled';
+import { HomeContainer, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle, ButtonContainer } from './styled';
 import { Link, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import config from '../../config';
@@ -7,6 +7,7 @@ import homeIcon from '../../assets/homeIcon.svg';
 import PixelTransition from '../../components/pixelTransition/PixelTransition';
 import DecryptedText from '../../components/decryptedText/DecryptedText';
 import Particles from '../../components/particles/Particles';
+import RoomTile from '../../components/roomTile/RoomTile';
 
 
 const Home: React.FC = () => {
@@ -126,9 +127,7 @@ const Home: React.FC = () => {
       <RoomsContainer>
         {rooms.map(room => (
           <Link key={room.name} to={`/room/${room.name}`}>
-            <RoomTile>
-              {room.name} ({room.userCount} users)
-            </RoomTile>
+            <RoomTile name={room.name} userCount={room.userCount} />
           </Link>
         ))}
         <AddRoomTile onClick={openModal}>+ Add Room</AddRoomTile>

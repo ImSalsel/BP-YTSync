@@ -11,38 +11,33 @@ export const HomeContainer = styled.div`
 
 export const RoomsContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+  justify-content: left; /* Center items horizontally */
   margin-top: 0%;
   width: 80%;
   height: 40%;
   border-radius: 24px;
-  align-items: space-between;
   gap: 20px;
   background-color: rgb(31, 29, 32);
   padding: 20px;
   z-index: 1;
+  overflow-y: auto;
 `;
 
-export const RoomTile = styled.div`
-  background-color: rgb(18, 18, 19);
+
+
+export const AddRoomTile = styled.div`
   color: white;
   padding: 20px;
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
-  width: 150px;
+  width: 160px;
   height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-export const AddRoomTile = styled(RoomTile)`
   background-color: #28a745;
 
   &:hover {
