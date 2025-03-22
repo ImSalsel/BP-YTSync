@@ -12,8 +12,8 @@ export const HomeContainer = styled.div`
 
 export const RoomsContainer = styled.div`
   display: flex;
-  flex-wrap: wrap; /* Allow items to wrap to the next line */
-  justify-content: left; /* Center items horizontally */
+  flex-wrap: wrap; 
+  justify-content: left;
   margin-top: 0%;
   width: 80%;
   height: 40%;
@@ -32,8 +32,8 @@ export const RoomsContainer = styled.div`
 `;
 
 export const StyledLink = styled(Link)`
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Inherit text color */
+  text-decoration: none; 
+  color: inherit; 
 `;
 
 
@@ -62,7 +62,7 @@ export const Modal = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8); /* Darker background for a more futuristic look */
+  background-color: rgba(0, 0, 0, 0.8); 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,14 +70,14 @@ export const Modal = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  background-color: rgb(31, 29, 32); /* Dark background for the modal content */
+  background-color: rgb(31, 29, 32); 
   padding: 20px;
   border-radius: 10px;
   width: 300px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for a modern look */
-  color: white; /* White text color */
-  font-family: 'Orbitron' ;/* Modern font */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  color: white; 
+  font-family: 'Orbitron' ;
 `;
 
 export const CloseButton = styled.button`
@@ -103,8 +103,8 @@ export const CreateRoomInput = styled.input`
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 16px;
-  background-color: rgb(18, 18, 19); /* Dark background for the input */
-  color: white; /* White text color */
+  background-color: rgb(18, 18, 19); 
+  color: white; 
 `;
 
 export const ButtonContainer = styled.div`
@@ -128,8 +128,8 @@ export const CreateRoomButton = styled.button`
 `;
 
 export const Logo = styled.img`
-  width: 250px; /* Adjust the size as needed */
-  height: 250px; /* Adjust the size as needed */
+  width: 250px; 
+  height: 250px; 
   margin-top: 5%;
 `;
 

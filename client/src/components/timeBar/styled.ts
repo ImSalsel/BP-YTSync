@@ -11,31 +11,31 @@ export const TimeBarContainer = styled.div`
 
 export const ProgressBar = styled.div`
   height: 13%;
-  background-color:rgb(30, 45, 200); /* White color for the progress bar */
+  background-color:rgb(30, 45, 200); 
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: 5px; /* Rounded corners */
+  border-radius: 5px; 
 `;
 
 export const ProgressIndicator = styled.div`
   width: 10px;
   height: 20px;
-  background-color: rgb(30, 45, 200); /* White color for the indicator */
+  background-color: rgb(30, 45, 200); 
   position: absolute;
   top: 2%;
   transform: translateY(-50%);
-  border-radius: 2px; /* Rounded corners */
+  border-radius: 2px; 
 `;
 
 export const ProgressBarFull = styled.div`
   height: 10%;
   width: 100%;
-  background-color: #333; /* White color for the progress bar */
+  background-color: #333; 
   position: absolute;
   top: 0;
   left: 0;
-  border-radius: 5px; /* Rounded corners */
+  border-radius: 5px; 
   z-index: 0;
 `;
 

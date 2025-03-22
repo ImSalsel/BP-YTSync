@@ -46,7 +46,7 @@ export const SongTitleText = styled.div`
 export const ScrollingText = styled.div`
   display: inline-block;
   white-space: nowrap;
-  animation: ${scroll} 10s linear infinite;
+  animation: ${scroll} 15s linear infinite;
 `;
 
 export const StaticText = styled.div`
