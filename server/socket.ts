@@ -7,11 +7,12 @@ interface Room {
   currentTimeout: NodeJS.Timeout | null;
   startTime: number | null;
   users: Set<string>;
+  userMap: Map<string, string>; // Map to store socket ID to user ID
 }
 
 const rooms: { [roomId: string]: Room } = {
-  Rave_in_the_grave: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
-  music: { queue: [], currentTimeout: null, startTime: null, users: new Set() },
+  Rave_in_the_grave: { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() },
+  music: { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() },
 };
 
 const playNextSong = async (io: Server, roomId: string) => {
@@ -52,23 +53,31 @@ const playNextSong = async (io: Server, roomId: string) => {
   }
 };
 
+const getUniqueUserCount = (room: Room): number => {
+  const uniqueUserIds = new Set(room.userMap.values());
+  return uniqueUserIds.size;
+};
+
 export const setupSocket = (io: Server) => {
   io.on('connection', (socket) => {
     console.log('New client connected', socket.id);
+
+    const userId = socket.handshake.query.userId as string;
 
     socket.on('joinRoom', (roomId: string) => {
       socket.join(roomId);
       console.log(`Client ${socket.id} joined room ${roomId}`);
 
       if (!rooms[roomId]) {
-        rooms[roomId] = { queue: [], currentTimeout: null, startTime: null, users: new Set() };
+        rooms[roomId] = { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() };
       }
 
       const room = rooms[roomId];
       room.users.add(socket.id);
+      room.userMap.set(socket.id, userId);
 
       // Emit the updated user count to the room
-      io.to(roomId).emit('userCountUpdated', roomId, room.users.size);
+      io.to(roomId).emit('userCountUpdated', roomId, getUniqueUserCount(room));
 
       // Send the current queue to the newly connected client
       socket.emit('queueUpdated', room.queue);
@@ -83,14 +92,14 @@ export const setupSocket = (io: Server) => {
 
     socket.on('createRoom', (roomName: string) => {
       if (!rooms[roomName]) {
-        rooms[roomName] = { queue: [], currentTimeout: null, startTime: null, users: new Set() };
+        rooms[roomName] = { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() };
         console.log(`Room ${roomName} created`);
       }
 
       // Send the updated room list to all clients
       io.emit('roomListUpdated', Object.keys(rooms).map(roomId => ({
         name: roomId,
-        userCount: rooms[roomId].users.size
+        userCount: getUniqueUserCount(rooms[roomId])
       })));
     });
 
@@ -98,7 +107,7 @@ export const setupSocket = (io: Server) => {
       // Send the current room list to the client
       socket.emit('roomListUpdated', Object.keys(rooms).map(roomId => ({
         name: roomId,
-        userCount: rooms[roomId].users.size
+        userCount: getUniqueUserCount(rooms[roomId])
       })));
     });
 
@@ -141,7 +150,8 @@ export const setupSocket = (io: Server) => {
         const room = rooms[roomId];
         if (room.users.has(socket.id)) {
           room.users.delete(socket.id);
-          io.to(roomId).emit('userCountUpdated', roomId, room.users.size);
+          room.userMap.delete(socket.id);
+          io.to(roomId).emit('userCountUpdated', roomId, getUniqueUserCount(room));
 
           // Delete the room if it becomes empty and it's not a default room
           if (room.users.size === 0 && roomId !== 'Rave_in_the_grave' && roomId !== 'music') {

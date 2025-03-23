@@ -4,6 +4,7 @@ import { YouTubePlayer } from 'react-youtube';
 import { useParams, useNavigate } from 'react-router-dom';
 import { RoomContextProps, Video, Opts } from './types';
 import config from '../../config';
+import Cookies from 'js-cookie';
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 
@@ -42,9 +43,11 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
+    const userId = Cookies.get('userId');
     const newSocket = io(config.SOCKET_ADDRESS, {
       transports: ["websocket", "polling"],
-      withCredentials: true
+      withCredentials: true,
+      query: { userId } // Send the userId as part of the connection query
     });
     setSocket(newSocket);
 
