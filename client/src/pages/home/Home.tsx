@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { HomeContainer, RoomsContainer, AddRoomTile, Modal, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle, ButtonContainer, StyledLink } from './styled';
-import {  useNavigate } from 'react-router-dom';
+import { HomeContainer, RoomsContainer, AddRoomTile, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle, ButtonContainer, Modal } from './styled';
 import io from 'socket.io-client';
 import config from '../../config';
 import homeIcon from '../../assets/homeIcon.svg';
@@ -8,12 +7,18 @@ import PixelTransition from '../../components/pixelTransition/PixelTransition';
 import DecryptedText from '../../components/decryptedText/DecryptedText';
 import Particles from '../../components/particles/Particles';
 import RoomTile from '../../components/roomTile/RoomTile';
-
+import GoogleLoginButton from '../../components/googleLoginButton/GoogleLoginButton';
+import { useNavigate } from 'react-router-dom';
+import LoginModal from '../../components/loginModal/LoginModal';
+import { useAuth } from '../../context/AuthContext';
 
 const Home: React.FC = () => {
   const [newRoom, setNewRoom] = useState('');
   const [rooms, setRooms] = useState<{ name: string, userCount: number }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [redirectToRoom, setRedirectToRoom] = useState<string | null>(null);
+  const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,13 +74,42 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleRoomClick = (roomName: string) => {
+    if (isAuthenticated) {
+      navigate(`/room/${roomName}`);
+    } else {
+      setRedirectToRoom(roomName);
+      setIsLoginModalOpen(true);
+    }
+  };
+
   const openModal = () => {
-    setIsModalOpen(true);
+    if (isAuthenticated) {
+      setIsModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setNewRoom('');
+  };
+
+  const closeLoginModal = () => {
+    setIsLoginModalOpen(false);
+    setRedirectToRoom(null);
+  };
+
+  const onLoginSuccess = () => {
+    login();
+    setIsLoginModalOpen(false);
+    if (redirectToRoom) {
+      navigate(`/room/${redirectToRoom}`);
+      setRedirectToRoom(null);
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const particlesProps = useMemo(() => ({
@@ -126,9 +160,7 @@ const Home: React.FC = () => {
       </RoomTitle>
       <RoomsContainer>
         {rooms.map(room => (
-          <StyledLink key={room.name} to={`/room/${room.name}`}>
-            <RoomTile name={room.name} userCount={room.userCount} />
-          </StyledLink>
+          <RoomTile key={room.name} name={room.name} userCount={room.userCount} onClick={() => handleRoomClick(room.name)} />
         ))}
         <AddRoomTile onClick={openModal}>+ Add Room</AddRoomTile>
       </RoomsContainer>
@@ -151,6 +183,9 @@ const Home: React.FC = () => {
           </ModalContent>
         </Modal>
       )}
+      <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal}>
+        <GoogleLoginButton onSuccess={onLoginSuccess} />
+      </LoginModal>
     </HomeContainer>
   );
 };
