@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { HomeContainer, RoomsContainer, AddRoomTile, ModalContent, CloseButton, CreateRoomForm, CreateRoomInput, CreateRoomButton, RoomTitle, ButtonContainer, Modal } from './styled';
+import { HomeContainer, RoomsContainer, AddRoomTile, RoomTitle} from './styled';
 import io from 'socket.io-client';
 import config from '../../config';
 import homeIcon from '../../assets/homeIcon.svg';
@@ -11,9 +11,9 @@ import GoogleLoginButton from '../../components/googleLoginButton/GoogleLoginBut
 import { useNavigate } from 'react-router-dom';
 import LoginModal from '../../components/loginModal/LoginModal';
 import { useAuth } from '../../context/AuthContext';
+import CreateRoomModal from '../../components/createRoomModal/CreateRoomModal';
 
 const Home: React.FC = () => {
-  const [newRoom, setNewRoom] = useState('');
   const [rooms, setRooms] = useState<{ name: string, userCount: number }[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -25,18 +25,6 @@ const Home: React.FC = () => {
     const socket = io(config.SOCKET_ADDRESS, {
       transports: ["websocket", "polling"],
       withCredentials: true
-    });
-  
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
-
-    socket.on('connect_error', (error) => {
-      console.error('Connection error:', error);
-    });
-
-    socket.on('disconnect', (reason) => {
-      console.warn('Disconnected from server:', reason);
     });
 
     socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
@@ -55,23 +43,14 @@ const Home: React.FC = () => {
     };
   }, []);
 
-  const sanitizeInput = (input: string) => {
-    return input.replace(/[^a-zA-Z0-9 ]/g, ''); // Remove special characters
-  };
 
-  const handleCreateRoom = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const sanitizedRoomName = sanitizeInput(newRoom.trim());
-    if (sanitizedRoomName) {
-      const socket = io(config.SOCKET_ADDRESS);
-      socket.emit('createRoom', sanitizedRoomName);
-      socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
-        setRooms(updatedRooms);
-        navigate(`/room/${sanitizedRoomName}`);
-      });
-      setNewRoom('');
-      setIsModalOpen(false);
-    }
+  const handleCreateRoom = (roomName: string) => {
+    const socket = io(config.SOCKET_ADDRESS);
+    socket.emit('createRoom', roomName);
+    socket.on('roomListUpdated', (updatedRooms: { name: string, userCount: number }[]) => {
+      setRooms(updatedRooms);
+      navigate(`/room/${roomName}`);
+    });
   };
 
   const handleRoomClick = (roomName: string) => {
@@ -93,7 +72,6 @@ const Home: React.FC = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setNewRoom('');
   };
 
   const closeLoginModal = () => {
@@ -111,6 +89,7 @@ const Home: React.FC = () => {
       setIsModalOpen(true);
     }
   };
+  
 
   const particlesProps = useMemo(() => ({
     particleColors: ['#ffffff', '#ffffff'],
@@ -164,25 +143,11 @@ const Home: React.FC = () => {
         ))}
         <AddRoomTile onClick={openModal}>+ Add Room</AddRoomTile>
       </RoomsContainer>
-      {isModalOpen && (
-        <Modal>
-          <ModalContent>
-            <CreateRoomForm onSubmit={handleCreateRoom}>
-              <CreateRoomInput
-                type="text"
-                value={newRoom}
-                onChange={(e) => setNewRoom(sanitizeInput(e.target.value))}
-                placeholder="Enter room name"
-                maxLength={20} // Set character limit
-              />
-              <ButtonContainer>
-                <CreateRoomButton type="submit">Create Room</CreateRoomButton>
-                <CloseButton onClick={closeModal}>Cancel</CloseButton>
-              </ButtonContainer>
-            </CreateRoomForm>
-          </ModalContent>
-        </Modal>
-      )}
+        <CreateRoomModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onCreateRoom={handleCreateRoom}
+    />
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal}>
         <GoogleLoginButton onSuccess={onLoginSuccess} />
       </LoginModal>
