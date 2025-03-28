@@ -6,13 +6,13 @@ interface Room {
   queue: Video[];
   currentTimeout: NodeJS.Timeout | null;
   startTime: number | null;
-  users: Set<string>;
+  websocketUserIDs: Set<string>;
   userMap: Map<string, string>; // Map to store socket ID to user ID
 }
 
 const rooms: { [roomId: string]: Room } = {
-  Rave_in_the_grave: { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() },
-  music: { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() },
+  Rave_in_the_grave: { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() },
+  music: { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() },
 };
 
 const playNextSong = async (io: Server, roomId: string) => {
@@ -69,11 +69,11 @@ export const setupSocket = (io: Server) => {
       console.log(`Client ${socket.id} joined room ${roomId}`);
 
       if (!rooms[roomId]) {
-        rooms[roomId] = { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() };
+        rooms[roomId] = { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() };
       }
 
       const room = rooms[roomId];
-      room.users.add(socket.id);
+      room.websocketUserIDs.add(socket.id);
       room.userMap.set(socket.id, userId);
 
       // Emit the updated user count to the room
@@ -92,7 +92,7 @@ export const setupSocket = (io: Server) => {
 
     socket.on('createRoom', (roomName: string) => {
       if (!rooms[roomName]) {
-        rooms[roomName] = { queue: [], currentTimeout: null, startTime: null, users: new Set(), userMap: new Map() };
+        rooms[roomName] = { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() };
         console.log(`Room ${roomName} created`);
       }
 
@@ -148,13 +148,13 @@ export const setupSocket = (io: Server) => {
 
       for (const roomId in rooms) {
         const room = rooms[roomId];
-        if (room.users.has(socket.id)) {
-          room.users.delete(socket.id);
+        if (room.websocketUserIDs.has(socket.id)) {
+          room.websocketUserIDs.delete(socket.id);
           room.userMap.delete(socket.id);
           io.to(roomId).emit('userCountUpdated', roomId, getUniqueUserCount(room));
 
           // Delete the room if it becomes empty and it's not a default room
-          if (room.users.size === 0 && roomId !== 'Rave_in_the_grave' && roomId !== 'music') {
+          if (room.websocketUserIDs.size === 0 && roomId !== 'Rave_in_the_grave' && roomId !== 'music') {
             delete rooms[roomId];
             console.log(`Room ${roomId} deleted`);
           }
