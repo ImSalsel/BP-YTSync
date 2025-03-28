@@ -60,8 +60,9 @@ export const SearchForm = styled.form`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative; /* Ensure it is positioned relative to its parent */
+  top: 40px; /* Set the fixed top distance */
 `;
-
 export const SearchBar = styled.input`
   width: 80%;
   height: 25%;

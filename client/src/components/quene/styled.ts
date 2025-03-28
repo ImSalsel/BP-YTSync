@@ -17,8 +17,8 @@ export const Song = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 95%;
-  padding: 10px;
+  width: 90%;
+  padding: 4%;
   margin: 5px 0;
   background-color: #2a2a2a;
   border-radius: 5px;

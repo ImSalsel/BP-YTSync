@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -30,19 +30,27 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userCount, setUserCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
-    if (videoId === video.id) {
-      // If the same video is played again, clear the videoId temporarily
-      setVideoId(null);
-      setTimeout(() => {
+  const videoIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    videoIdRef.current = videoId;
+  }, [videoId]);
+
+  const handlePlayNextSong = useCallback(
+    ({ video, elapsedTime }: { video: Video; elapsedTime: number }) => {
+      if (videoIdRef.current === video.id) {
+        setVideoId(null);
+        setTimeout(() => {
+          setVideoId(video.id);
+          setElapsedTime(elapsedTime);
+        }, 0);
+      } else {
         setVideoId(video.id);
         setElapsedTime(elapsedTime);
-      }, 0); // Use a short delay to allow the state to reset
-    } else {
-      setVideoId(video.id);
-      setElapsedTime(elapsedTime);
-    }
-  };
+      }
+    },
+    []
+  );
 
   const handleQueueUpdated = (updatedQueue: Video[]) => {
     setQueue(updatedQueue);
@@ -54,9 +62,9 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const userId = Cookies.get('userId');
     const newSocket = io(config.SOCKET_ADDRESS, {
-      transports: ["websocket", "polling"],
+      transports: ['websocket', 'polling'],
       withCredentials: true,
-      query: { userId } // Send the userId as part of the connection query
+      query: { userId }, // Send the userId as part of the connection query
     });
     setSocket(newSocket);
 
@@ -86,7 +94,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       newSocket.off('userCountUpdated');
       newSocket.close();
     };
-  }, [roomId, navigate]);
+  }, [roomId, navigate, handlePlayNextSong]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
