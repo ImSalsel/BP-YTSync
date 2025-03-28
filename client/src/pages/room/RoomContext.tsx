@@ -31,8 +31,17 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handlePlayNextSong = ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => {
-    setVideoId(video.id);
-    setElapsedTime(elapsedTime);
+    if (videoId === video.id) {
+      // If the same video is played again, clear the videoId temporarily
+      setVideoId(null);
+      setTimeout(() => {
+        setVideoId(video.id);
+        setElapsedTime(elapsedTime);
+      }, 0); // Use a short delay to allow the state to reset
+    } else {
+      setVideoId(video.id);
+      setElapsedTime(elapsedTime);
+    }
   };
 
   const handleQueueUpdated = (updatedQueue: Video[]) => {
