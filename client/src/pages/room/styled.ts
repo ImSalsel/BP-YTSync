@@ -17,6 +17,17 @@ export const RoomContainer = styled.div`
     .title { grid-area: title; }
     .search { grid-area: Search; }
     .queue { grid-area: Queue; }
+
+    @media (max-width: 1000px) {
+      grid-template-areas:
+    'YTvideo'
+    'Queue'
+    'Search';
+  grid-template-rows: 40% 40% 20%;
+  grid-template-columns: 100%;
+  gap: 10px 0%;
+  }
+
 `;
 
 
@@ -48,9 +59,8 @@ export const VideoPlayer = styled.div`
   position: relative;
 
   @media (max-width: 1000px) {
-    width: 80%; 
-    left: 0%;
-    margin-left: 10%;
+    width: 100%; 
+
   }
 
 `;

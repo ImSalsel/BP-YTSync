@@ -1,5 +1,5 @@
 import React from 'react';
-import { Overlay, QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
+import { QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
 import { RoomProvider, useRoomContext } from './RoomContext';
 import NoVideo from '../../components/noVideo/NoVideo';
@@ -24,7 +24,6 @@ const RoomContent: React.FC = () => {
       </SearchForm>
       {errorMessage && <ErrorMessage message={errorMessage} />}
       <VideoPlayer>
-        <Overlay /> 
         {videoId ? (
           <YouTube
             videoId={videoId}
