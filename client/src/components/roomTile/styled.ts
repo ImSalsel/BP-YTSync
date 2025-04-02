@@ -36,3 +36,13 @@ export const UserCount = styled.div`
   }
 `;
 
+export const LockIconContainer = styled.div`
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+`;
+

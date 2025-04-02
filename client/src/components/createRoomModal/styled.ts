@@ -70,3 +70,31 @@ export const CreateRoomButton = styled.button`
     background-color: #218838;
   }
 `;
+
+export const ToggleContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+`;
+
+export const ToggleLabel = styled.label`
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  cursor: pointer;
+`;
+
+export const ToggleInput = styled.input`
+  margin-right: 5px;
+`;
+
+
+
+export const UserLimitInput = styled.input`
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;

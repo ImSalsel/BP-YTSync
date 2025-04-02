@@ -16,8 +16,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess }) => {
     console.log('Login Success:', response);
     const userId = response.credential;
     if (userId) {
-      Cookies.set('userId', userId, { secure: true, sameSite: 'strict' }); // Remove httpOnly flag
-      console.log('Cookie set:', Cookies.get('userId')); // Add this line to log the cookie value
+      Cookies.set('userId', userId, { secure: true, sameSite: 'strict' }); 
     } else {
       console.error('User ID is undefined');
     }

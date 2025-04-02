@@ -5,11 +5,13 @@ import GlobalStyles from './App';
 import NoPage from './pages/noPage/NoPage';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/privateRoute/PrivateRoute';
+import { WebSocketProvider } from './context/WebSocketContext';
 
 function App() {
   return (
     <>
       <GlobalStyles />
+      <WebSocketProvider>
       <AuthProvider>
         <Router>
           <Routes>
@@ -21,6 +23,7 @@ function App() {
           </Routes>
         </Router>
       </AuthProvider>
+      </WebSocketProvider>
     </>
   );
 }

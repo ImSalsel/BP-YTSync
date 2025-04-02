@@ -1,18 +1,37 @@
 import { Server, Socket } from 'socket.io';
 import { searchYouTube, getVideoDetails } from './controllers/youtubeController';
 import { Video } from './models/video';
+import { Room } from './models/room';
 
-interface Room {
-  queue: Video[];
-  currentTimeout: NodeJS.Timeout | null;
-  startTime: number | null;
-  websocketUserIDs: Set<string>;
-  userMap: Map<string, string>; // Map to store socket ID to user ID
-}
 
 const rooms: { [roomId: string]: Room } = {
-  Rave_in_the_grave: { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() },
-  music: { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() },
+  Rave_in_the_grave: {
+    queue: [],
+    currentTimeout: null,
+    startTime: null,
+    websocketUserIDs: new Set(),
+    userMap: new Map(),
+    ownerId: 'defaultOwner', // Example owner ID
+    password: null, // No password for this room
+  },
+  music: {
+    queue: [],
+    currentTimeout: null,
+    startTime: null,
+    websocketUserIDs: new Set(),
+    userMap: new Map(),
+    ownerId: 'defaultOwner', // Example owner ID
+    password: null, // No password for this room
+  },
+};
+
+const generateRoomCode = (): string => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return code;
 };
 
 const getUniqueUserCount = (room: Room): number => {
@@ -55,13 +74,24 @@ const playNextSong = async (io: Server, roomId: string) => {
 
 // --- Event Handlers ---
 
+const verifyRoomCode = (roomId: string, code: string | null): { success: boolean; error?: string } => {
+  const room = rooms[roomId];
+
+  if (!room) {
+    return { success: false, error: `Room ${roomId} does not exist` };
+  }
+
+  if (room.password && room.password !== code) {
+    return { success: false, error: 'Incorrect code for private room' };
+  }
+
+  return { success: true };
+};
+
 const handleJoinRoom = (io: Server, socket: Socket, roomId: string, userId: string) => {
   socket.join(roomId);
-  console.log(`Client ${socket.id} joined room ${roomId}`);
+  console.log(`Client ${socket.id} joined room ${roomId} with user ID ${userId.substring(0, 5)}...`);
 
-  if (!rooms[roomId]) {
-    rooms[roomId] = { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() };
-  }
 
   const room = rooms[roomId];
   room.websocketUserIDs.add(socket.id);
@@ -77,12 +107,20 @@ const handleJoinRoom = (io: Server, socket: Socket, roomId: string, userId: stri
   }
 };
 
-const handleCreateRoom = (io: Server, roomName: string) => {
+const handleCreateRoom = (io: Server, roomName: string, userId: string, isPublic: boolean, userLimit: number | null) => {
+  const password = isPublic ? null : generateRoomCode(); 
   if (!rooms[roomName]) {
-    rooms[roomName] = { queue: [], currentTimeout: null, startTime: null, websocketUserIDs: new Set(), userMap: new Map() };
-    console.log(`Room ${roomName} created`);
+    rooms[roomName] = {
+      queue: [],
+      currentTimeout: null,
+      startTime: null,
+      websocketUserIDs: new Set(),
+      userMap: new Map(),
+      ownerId: userId,
+      password: password,
+    };
   }
-
+  console.log(`Room ${roomName} created by user ${userId.substring(0,5)} and is ${isPublic ? 'public' : 'private'} with password ${password}`);
   io.emit('roomListUpdated', Object.keys(rooms).map(roomId => ({
     name: roomId,
     userCount: getUniqueUserCount(rooms[roomId]),
@@ -93,6 +131,7 @@ const handleGetRoomList = (socket: Socket) => {
   socket.emit('roomListUpdated', Object.keys(rooms).map(roomId => ({
     name: roomId,
     userCount: getUniqueUserCount(rooms[roomId]),
+    isPublic: rooms[roomId].password === null,
   })));
 };
 
@@ -145,20 +184,58 @@ const handleDisconnect = (io: Server, socket: Socket) => {
   }
 };
 
+const handleLeaveRoom = (io: Server, socket: Socket, roomId: string) => {
+  const room = rooms[roomId];
+  if (!room) return;
+
+  if (room.websocketUserIDs.has(socket.id)) {
+    room.websocketUserIDs.delete(socket.id);
+    room.userMap.delete(socket.id);
+
+    io.to(roomId).emit('userCountUpdated', roomId, getUniqueUserCount(room));
+
+    // If the room is empty and not a default room, delete it
+    if (room.websocketUserIDs.size === 0 && roomId !== 'Rave_in_the_grave' && roomId !== 'music') {
+      delete rooms[roomId];
+      console.log(`Room ${roomId} deleted`);
+    }
+  }
+};
+
 // --- Main Setup Function ---
 
 export const setupSocket = (io: Server) => {
   io.on('connection', (socket) => {
-    console.log('New client connected', socket.id);
-
     const userId = socket.handshake.query.userId as string;
+    console.log('New client connected', socket.id, userId.substring(0, 5), '...');
 
     socket.on('joinRoom', (roomId: string) => handleJoinRoom(io, socket, roomId, userId));
-    socket.on('createRoom', (roomName: string) => handleCreateRoom(io, roomName));
+    socket.on('createRoom', (roomName: string, isPublic: boolean, userLimit: number | null, creatorId: string) => handleCreateRoom(io, roomName, creatorId, isPublic, userLimit));
     socket.on('getRoomList', () => handleGetRoomList(socket));
     socket.on('checkRoomExists', (roomId: string) => handleCheckRoomExists(socket, roomId));
     socket.on('searchYouTube', (query: string, roomId: string) => handleSearchYouTube(io, query, roomId));
     socket.on('removeSong', (index: number, roomId: string) => handleRemoveSong(io, index, roomId));
     socket.on('disconnect', () => handleDisconnect(io, socket));
+
+    socket.on('verifyRoomCode', (roomId: string, code: string | null, callback: (response: { success: boolean; error?: string }) => void) => {
+      const room = rooms[roomId];
+    
+      if (!room) {
+        callback({ success: false, error: `Room ${roomId} does not exist` });
+        return;
+      }
+    
+      if (room.password && room.password !== code) {
+        callback({ success: false, error: 'Incorrect code for private room' });
+        return;
+      }
+    
+      callback({ success: true });
+    });
+
+    socket.on('leaveRoom', (roomId: string) => {
+      handleLeaveRoom(io, socket, roomId);
+    });
+
   });
 };

@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
-import io, { Socket } from 'socket.io-client';
 import { YouTubePlayer } from 'react-youtube';
 import { useParams, useNavigate } from 'react-router-dom';
 import { RoomContextProps, Video, Opts } from './types';
-import config from '../../config';
-import Cookies from 'js-cookie';
+import { useWebSocket } from '../../context/WebSocketContext';
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 
@@ -22,13 +20,14 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const navigate = useNavigate();
   const [queue, setQueue] = useState<Video[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [volume, setVolume] = useState(50);
   const [player, setPlayer] = useState<YouTubePlayer | null>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const [userCount, setUserCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { socket } = useWebSocket();
+
 
   const videoIdRef = useRef<string | null>(null);
 
@@ -60,41 +59,40 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   useEffect(() => {
-    const userId = Cookies.get('userId');
-    const newSocket = io(config.SOCKET_ADDRESS, {
-      transports: ['websocket', 'polling'],
-      withCredentials: true,
-      query: { userId }, // Send the userId as part of the connection query
-    });
-    setSocket(newSocket);
+    return () => {
+      if (socket && roomId) {
+        socket.emit('leaveRoom', roomId);
+      }
+    };
+  }, [socket, roomId]);
 
-    newSocket.emit('checkRoomExists', roomId);
-
-    newSocket.on('roomExists', (exists: boolean) => {
+  useEffect(() => {
+    if (!socket) return;
+  
+    socket.emit('checkRoomExists', roomId);
+  
+    socket.on('roomExists', (exists: boolean) => {
       if (!exists) {
         navigate('/');
       } else {
-        newSocket.emit('joinRoom', roomId);
+        socket.emit('joinRoom', roomId);
       }
     });
-
-    // Handle receiving the initial queue and updates to the queue
-    newSocket.on('queueUpdated', handleQueueUpdated);
-
-    newSocket.on('playNextSong', handlePlayNextSong);
-
-    newSocket.on('userCountUpdated', (roomId: string, count: number) => {
+  
+    socket.on('queueUpdated', handleQueueUpdated);
+    socket.on('playNextSong', handlePlayNextSong);
+    socket.on('userCountUpdated', (roomId: string, count: number) => {
       console.log('userCountUpdated event received:', roomId, count); // Debug log
       setUserCount(count);
     });
-
+  
     return () => {
-      newSocket.off('queueUpdated', handleQueueUpdated);
-      newSocket.off('playNextSong', handlePlayNextSong);
-      newSocket.off('userCountUpdated');
-      newSocket.close();
+      socket.off('roomExists');
+      socket.off('queueUpdated', handleQueueUpdated);
+      socket.off('playNextSong', handlePlayNextSong);
+      socket.off('userCountUpdated');
     };
-  }, [roomId, navigate, handlePlayNextSong]);
+  }, [roomId, navigate, handlePlayNextSong, socket]);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
