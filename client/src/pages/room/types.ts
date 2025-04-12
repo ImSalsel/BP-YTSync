@@ -35,10 +35,6 @@ export interface RoomContextProps {
   userCount: number;
   elapsedTime: number | null;
   errorMessage: string | null;
-}
-
-export interface Video {
-  id: string;
-  title: string;
-  url: string;
+  isPrivate: boolean;
+  roomId: string | undefined;
 }

@@ -136,10 +136,11 @@ const handleGetRoomList = (socket: Socket) => {
 };
 
 const handleCheckRoomExists = (socket: Socket, roomId: string) => {
-  const roomExists = !!rooms[roomId];
-  socket.emit('roomExists', roomExists);
+  const room = rooms[roomId];
+  const roomExists = !!room;
+  const isPrivate = roomExists && !!room.password; 
+  socket.emit('roomExists', roomExists, isPrivate);
 };
-
 const handleSearchYouTube = async (io: Server, query: string, roomId: string) => {
   const newVideo = await searchYouTube(query);
   if (newVideo) {
@@ -202,6 +203,39 @@ const handleLeaveRoom = (io: Server, socket: Socket, roomId: string) => {
   }
 };
 
+const handleVerifyRoomCode = (
+  roomId: string,
+  code: string | null
+): { success: boolean; error?: string } => {
+  const room = rooms[roomId];
+
+  if (!room) {
+    return { success: false, error: `Room ${roomId} does not exist` };
+  }
+
+  if (room.password && room.password !== code) {
+    return { success: false, error: 'Incorrect code for private room' };
+  }
+
+  return { success: true };
+};
+
+const handleGetRoomCode = (
+  roomId: string
+): { success: boolean; code?: string; error?: string } => {
+  const room = rooms[roomId];
+
+  if (!room) {
+    return { success: false, error: `Room ${roomId} does not exist` };
+  }
+
+  if (!room.password) {
+    return { success: false, error: 'This room is not private' };
+  }
+
+  return { success: true, code: room.password };
+};
+
 // --- Main Setup Function ---
 
 export const setupSocket = (io: Server) => {
@@ -217,20 +251,16 @@ export const setupSocket = (io: Server) => {
     socket.on('removeSong', (index: number, roomId: string) => handleRemoveSong(io, index, roomId));
     socket.on('disconnect', () => handleDisconnect(io, socket));
 
-    socket.on('verifyRoomCode', (roomId: string, code: string | null, callback: (response: { success: boolean; error?: string }) => void) => {
-      const room = rooms[roomId];
-    
-      if (!room) {
-        callback({ success: false, error: `Room ${roomId} does not exist` });
-        return;
-      }
-    
-      if (room.password && room.password !== code) {
-        callback({ success: false, error: 'Incorrect code for private room' });
-        return;
-      }
-    
-      callback({ success: true });
+     // Verify Room Code
+     socket.on('verifyRoomCode', (roomId: string, code: string | null, callback: (response: { success: boolean; error?: string }) => void) => {
+      const result = handleVerifyRoomCode(roomId, code);
+      callback(result);
+    });
+
+    // Get Room Code
+    socket.on('getRoomCode', (roomId: string, callback: (response: { success: boolean; code?: string; error?: string }) => void) => {
+      const result = handleGetRoomCode(roomId);
+      callback(result);
     });
 
     socket.on('leaveRoom', (roomId: string) => {

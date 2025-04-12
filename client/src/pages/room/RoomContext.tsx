@@ -27,6 +27,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userCount, setUserCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { socket } = useWebSocket();
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
 
 
   const videoIdRef = useRef<string | null>(null);
@@ -67,15 +68,17 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [socket, roomId]);
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !roomId) return;
   
     socket.emit('checkRoomExists', roomId);
   
-    socket.on('roomExists', (exists: boolean) => {
+    socket.on('roomExists', (exists: boolean, privateRoom: boolean) => {
+      console.log('roomExists event received:', { exists, privateRoom });
       if (!exists) {
         console.log('Room does not exist, redirecting to home page');
         navigate('/');
       } else {
+        setIsPrivate(privateRoom); // Set whether the room is private
         socket.emit('joinRoom', roomId);
       }
     });
@@ -135,7 +138,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, elapsedTime, userCount, errorMessage }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, elapsedTime, userCount, errorMessage, isPrivate, roomId }}>
       {children}
     </RoomContext.Provider>
   );

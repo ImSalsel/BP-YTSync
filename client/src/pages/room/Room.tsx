@@ -7,13 +7,15 @@ import Queue from '../../components/quene/Queue';
 import SongTitle from '../../components/songTitle/SongTitle';
 import TopBar from '../../components/topBar/TopBar';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
+import CodeDisplay from '../../components/codeDisplay/CodeDisplay';
 
 const RoomContent: React.FC = () => {
-  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player, errorMessage } = useRoomContext();
-
+  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player, errorMessage, isPrivate, socket, roomId } = useRoomContext();
+  console.log('isPrivate:', isPrivate); // Debug log
   return (
     <RoomContainer>
       <TopBar />
+      {isPrivate && <CodeDisplay roomId={roomId} socket={socket} />}
       <SearchForm onSubmit={handleSearch}>
         <SearchBar
           type="text"
