@@ -73,6 +73,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
     socket.on('roomExists', (exists: boolean) => {
       if (!exists) {
+        console.log('Room does not exist, redirecting to home page');
         navigate('/');
       } else {
         socket.emit('joinRoom', roomId);
