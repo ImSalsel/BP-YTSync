@@ -5,7 +5,7 @@ export const RoomContainer = styled.div`
   height: 100vh;
   background-color: rgb(31, 29, 32);
   display: grid; 
-  grid-template-columns: 5% 65% 25%; 
+  grid-template-columns: 5% 60% 30%; 
   grid-template-rows: 25% 60% 15%; 
   gap: 0px 2%; 
   grid-template-areas: 
@@ -74,12 +74,15 @@ export const SearchForm = styled.form`
   top: 40px; /* Set the fixed top distance */
 `;
 export const SearchBar = styled.input`
+  background-color: rgb(18, 18, 19);
   width: 80%;
   height: 25%;
   padding: 10px;
   font-size: 1.2rem;
   border: none;
   border-radius: 24px;
+  color: white;
+  outline: none;
 `;
 
 export const Overlay = styled.div`

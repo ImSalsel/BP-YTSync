@@ -26,7 +26,7 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
 
       const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
         params: {
-          part: 'snippet',
+          part: 'snippet,contentDetails',
           id: videoId,
           key: YOUTUBE_API_KEY,
         },
@@ -37,6 +37,8 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
         id: video.id,
         title: video.snippet.title,
         url: `https://www.youtube.com/watch?v=${video.id}`,
+        thumbnail: video.snippet.thumbnails.default.url, // Add thumbnail
+        duration: parseISO8601Duration(video.contentDetails.duration), // Add duration
       };
     } else {
       const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
@@ -54,10 +56,21 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
         throw new Error('Video is not embeddable');
       }
 
+      const videoDetailsResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+        params: {
+          part: 'snippet,contentDetails',
+          id: video.id.videoId,
+          key: YOUTUBE_API_KEY,
+        },
+      });
+
+      const videoDetails = videoDetailsResponse.data.items[0];
       return {
-        id: video.id.videoId,
-        title: video.snippet.title,
-        url: `https://www.youtube.com/watch?v=${video.id.videoId}`,
+        id: videoDetails.id,
+        title: videoDetails.snippet.title,
+        url: `https://www.youtube.com/watch?v=${videoDetails.id}`,
+        thumbnail: videoDetails.snippet.thumbnails.default.url, // Add thumbnail
+        duration: parseISO8601Duration(videoDetails.contentDetails.duration), // Add duration
       };
     }
   } catch (error) {
