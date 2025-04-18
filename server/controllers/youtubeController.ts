@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Video } from '../models/video';
 import dotenv from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
 dotenv.config(); 
 
 const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
@@ -34,11 +35,13 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
 
       const video = response.data.items[0];
       return {
-        id: video.id,
+        id: uuidv4(),
+        youtubeVideoId: video.id,
         title: video.snippet.title,
         url: `https://www.youtube.com/watch?v=${video.id}`,
-        thumbnail: video.snippet.thumbnails.default.url, // Add thumbnail
-        duration: parseISO8601Duration(video.contentDetails.duration), // Add duration
+        thumbnail: video.snippet.thumbnails.default.url, 
+        duration: parseISO8601Duration(video.contentDetails.duration), 
+        votes: { likes: new Set(), dislikes: new Set() },
       };
     } else {
       const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
@@ -67,10 +70,12 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
       const videoDetails = videoDetailsResponse.data.items[0];
       return {
         id: videoDetails.id,
+        youtubeVideoId: videoDetails.id,
         title: videoDetails.snippet.title,
         url: `https://www.youtube.com/watch?v=${videoDetails.id}`,
-        thumbnail: videoDetails.snippet.thumbnails.default.url, // Add thumbnail
-        duration: parseISO8601Duration(videoDetails.contentDetails.duration), // Add duration
+        thumbnail: videoDetails.snippet.thumbnails.default.url, 
+        duration: parseISO8601Duration(videoDetails.contentDetails.duration), 
+        votes: { likes: new Set(), dislikes: new Set() },
       };
     }
   } catch (error) {

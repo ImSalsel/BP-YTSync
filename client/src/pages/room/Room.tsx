@@ -10,7 +10,7 @@ import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import CodeDisplay from '../../components/codeDisplay/CodeDisplay';
 
 const RoomContent: React.FC = () => {
-  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, videoId, volume, setVolume, player, errorMessage, isPrivate, socket, roomId } = useRoomContext();
+  const { searchTerm, setSearchTerm, handleSearch, opts, onReady, youTubeVideoId: videoId, volume, setVolume, player, errorMessage, isPrivate, socket, roomId } = useRoomContext();
   console.log('isPrivate:', isPrivate); // Debug log
   return (
     <RoomContainer>

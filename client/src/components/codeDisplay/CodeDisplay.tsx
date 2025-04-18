@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { BlurredCode, CodeContainer } from './styled';
+import { Socket } from 'socket.io-client';
 
 interface CodeDisplayProps {
   roomId: string | undefined;
-  socket: any; // Replace with the correct type for your socket instance
+  socket: Socket | null; 
 }
 
 const CodeDisplay: React.FC<CodeDisplayProps> = ({ roomId, socket }) => {

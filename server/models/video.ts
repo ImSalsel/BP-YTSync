@@ -3,8 +3,10 @@
 
 export interface Video {
   id: string;
+  youtubeVideoId: string;
   title: string;
   url: string;
-  thumbnail: string; // Add thumbnail
-  duration: number;  // Add duration (in milliseconds)
+  thumbnail: string; 
+  duration: number;  
+  votes: { likes: Set<string>; dislikes: Set<string> };
 }

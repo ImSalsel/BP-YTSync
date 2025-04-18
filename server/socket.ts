@@ -48,7 +48,7 @@ const playNextSong = async (io: Server, roomId: string) => {
 
   if (room.queue.length > 0) {
     const currentVideo = room.queue[0];
-    const videoDetails = await getVideoDetails(currentVideo.id);
+    const videoDetails = await getVideoDetails(currentVideo.youtubeVideoId);
     const videoDuration = videoDetails ? videoDetails.duration : 300000;
 
     console.log(`Now playing in room ${roomId}: ${currentVideo.title}`);
@@ -74,19 +74,7 @@ const playNextSong = async (io: Server, roomId: string) => {
 
 // --- Event Handlers ---
 
-const verifyRoomCode = (roomId: string, code: string | null): { success: boolean; error?: string } => {
-  const room = rooms[roomId];
 
-  if (!room) {
-    return { success: false, error: `Room ${roomId} does not exist` };
-  }
-
-  if (room.password && room.password !== code) {
-    return { success: false, error: 'Incorrect code for private room' };
-  }
-
-  return { success: true };
-};
 
 const handleJoinRoom = (io: Server, socket: Socket, roomId: string, userId: string) => {
   socket.join(roomId);
@@ -141,6 +129,7 @@ const handleCheckRoomExists = (socket: Socket, roomId: string) => {
   const isPrivate = roomExists && !!room.password; 
   socket.emit('roomExists', roomExists, isPrivate);
 };
+
 const handleSearchYouTube = async (io: Server, query: string, roomId: string) => {
   const newVideo = await searchYouTube(query);
   if (newVideo) {
@@ -236,6 +225,55 @@ const handleGetRoomCode = (
   return { success: true, code: room.password };
 };
 
+const handleVoteVideo = (
+  io: Server,
+  roomId: string,
+  videoId: string,
+  voteType: 'like' | 'dislike',
+  userId: string
+) => {
+  const room = rooms[roomId];
+  if (!room) return;
+
+  // Ensure voting is only allowed in public rooms
+  if (room.password) return;
+
+  const video = room.queue.find((v) => v.id === videoId);
+  if (!video) {
+    console.error(`Video ${videoId} not found in room ${roomId} `);
+    return};
+
+  // Remove user from both vote sets to ensure only one vote per user
+  video.votes.likes.delete(userId);
+  video.votes.dislikes.delete(userId);
+
+  // Add user to the appropriate vote set
+  if (voteType === 'like') {
+    video.votes.likes.add(userId);
+  } else if (voteType === 'dislike') {
+    video.votes.dislikes.add(userId);
+  }
+
+  // Emit updated votes to all clients
+  io.to(roomId).emit('votesUpdated', videoId, video.votes.likes.size, video.votes.dislikes.size);
+console.log(`Votes updated for video ${videoId}: ${video.votes.likes.size} likes, ${video.votes.dislikes.size} dislikes`);
+
+
+  // Check if the video should be skipped
+  const totalUsers = room.websocketUserIDs.size;
+  const dislikes = video.votes.dislikes.size;
+  const likes = video.votes.likes.size;
+
+  // Skip the video if dislikes exceed 30% of total users
+  if (dislikes - likes > totalUsers * 0.3) {
+    room.queue.shift(); 
+    io.to(roomId).emit('queueUpdated', room.queue);
+    if (room.queue.length > 0) {
+      io.to(roomId).emit('playNextSong', room.queue[0]); // Play the next song
+    }
+  }
+};
+
 // --- Main Setup Function ---
 
 export const setupSocket = (io: Server) => {
@@ -262,6 +300,13 @@ export const setupSocket = (io: Server) => {
       const result = handleGetRoomCode(roomId);
       callback(result);
     });
+
+    socket.on(
+      'voteVideo',
+      (roomId: string, videoId: string, voteType: 'like' | 'dislike', userId: string) => {
+        handleVoteVideo(io, roomId, videoId, voteType, userId);
+      }
+    );
 
     socket.on('leaveRoom', (roomId: string) => {
       handleLeaveRoom(io, socket, roomId);

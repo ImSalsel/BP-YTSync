@@ -22,7 +22,7 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [searchTerm, setSearchTerm] = useState('');
   const [volume, setVolume] = useState(50);
   const [player, setPlayer] = useState<YouTubePlayer | null>(null);
-  const [videoId, setVideoId] = useState<string | null>(null);
+  const [youtubeVideoId, setYoutubeVideoId] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const [userCount, setUserCount] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,21 +33,25 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const videoIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    videoIdRef.current = videoId;
-  }, [videoId]);
+    videoIdRef.current = youtubeVideoId;
+  }, [youtubeVideoId]);
 
   const handlePlayNextSong = useCallback(
     ({ video, elapsedTime }: { video: Video; elapsedTime: number }) => {
-      if (videoIdRef.current === video.id) {
-        setVideoId(null);
+      if (videoIdRef.current === video.youtubeVideoId) {
+        // Temporarily clear the videoId and youtubeVideoId to force re-render
+        setYoutubeVideoId(null);
+  
         setTimeout(() => {
-          setVideoId(video.id);
+          setYoutubeVideoId(video.youtubeVideoId);
           setElapsedTime(elapsedTime);
-        }, 0);
+        }, 100); // Add a small delay to ensure state updates
       } else {
-        setVideoId(video.id);
+        setYoutubeVideoId(video.youtubeVideoId);
         setElapsedTime(elapsedTime);
       }
+  
+      videoIdRef.current = video.youtubeVideoId; // Update the ref to the current video ID
     },
     []
   );
@@ -55,7 +59,8 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const handleQueueUpdated = (updatedQueue: Video[]) => {
     setQueue(updatedQueue);
     if (updatedQueue.length === 0) {
-      setVideoId(null);
+      setYoutubeVideoId(null);
+      setElapsedTime(null);
     }
   };
 
@@ -67,6 +72,32 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, [socket, roomId]);
 
+  useEffect(() => {
+    if (!socket) return;
+  
+    const handleVotesUpdated = (videoId: string, likes: number, dislikes: number) => {
+      console.log('Votes updated:', { videoId, likes, dislikes });
+      setQueue((prevQueue) =>
+        prevQueue.map((video) =>
+          video.id === videoId
+            ? {
+                ...video,
+                likes, 
+                dislikes,
+              }
+            : video
+        )
+      );
+    };
+  
+    socket.on('votesUpdated', handleVotesUpdated);
+  
+    return () => {
+      socket.off('votesUpdated', handleVotesUpdated);
+    };
+  }, [socket]);
+
+  
   useEffect(() => {
     if (!socket || !roomId) return;
   
@@ -134,11 +165,13 @@ export const RoomProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     event.target.setVolume(volume);
     if (elapsedTime !== null) {
       event.target.seekTo(elapsedTime / 1000, true);
+      event.target.playVideo();
+      
     }
   };
 
   return (
-    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, videoId, volume, setVolume, player, elapsedTime, userCount, errorMessage, isPrivate, roomId }}>
+    <RoomContext.Provider value={{ queue, searchTerm, setSearchTerm, handleSearch, removeSong, socket, opts, onReady, handlePlayNextSong, youTubeVideoId: youtubeVideoId, volume, setVolume, player, elapsedTime, userCount, errorMessage, isPrivate, roomId }}>
       {children}
     </RoomContext.Provider>
   );

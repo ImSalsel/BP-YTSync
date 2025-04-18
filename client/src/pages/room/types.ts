@@ -3,10 +3,14 @@ import { Socket } from 'socket.io-client';
 
 export interface Video {
   id: string;
+  youtubeVideoId: string;
   title: string;
   url: string;
   thumbnail: string; 
   duration: number;  
+  votes: { likes: Set<string>; dislikes: Set<string> };
+  likes: number;
+  dislikes: number;
 }
 
 export interface Opts {
@@ -30,7 +34,7 @@ export interface RoomContextProps {
   opts: Opts;
   onReady: (event: { target: YouTubePlayer }) => void;
   handlePlayNextSong: ({ video, elapsedTime }: { video: Video, elapsedTime: number }) => void;
-  videoId: string | null;
+  youTubeVideoId: string | null;
   volume: number;
   setVolume: (volume: number) => void;
   player: YouTubePlayer | null;

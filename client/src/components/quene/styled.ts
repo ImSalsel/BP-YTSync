@@ -92,3 +92,26 @@ export const SongDetails = styled.div`
     text-overflow: ellipsis; /* Add ellipsis to truncated text */
   }
 `;
+
+export const VoteButtons = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
+export const VoteItem = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  span {
+    margin-left: 5px;
+  }
+`;
