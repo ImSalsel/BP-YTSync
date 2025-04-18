@@ -72,6 +72,10 @@ const playNextSong = async (io: Server, roomId: string) => {
   }
 };
 
+const removeVideoById = (room: Room, videoId: string) => {
+  room.queue = room.queue.filter((video) => video.id !== videoId);
+};
+
 // --- Event Handlers ---
 
 
@@ -250,13 +254,15 @@ const handleVoteVideo = (
   // Add user to the appropriate vote set
   if (voteType === 'like') {
     video.votes.likes.add(userId);
+    video.likes = video.votes.likes.size;
   } else if (voteType === 'dislike') {
     video.votes.dislikes.add(userId);
+    video.dislikes = video.votes.dislikes.size;
   }
 
   // Emit updated votes to all clients
   io.to(roomId).emit('votesUpdated', videoId, video.votes.likes.size, video.votes.dislikes.size);
-console.log(`Votes updated for video ${videoId}: ${video.votes.likes.size} likes, ${video.votes.dislikes.size} dislikes`);
+  console.log(`user ${userId} Votes updated for video ${videoId}: ${video.votes.likes.size} likes, ${video.votes.dislikes.size} dislikes`);
 
 
   // Check if the video should be skipped
@@ -266,10 +272,10 @@ console.log(`Votes updated for video ${videoId}: ${video.votes.likes.size} likes
 
   // Skip the video if dislikes exceed 30% of total users
   if (dislikes - likes > totalUsers * 0.3) {
-    room.queue.shift(); 
+    removeVideoById(room, videoId);
     io.to(roomId).emit('queueUpdated', room.queue);
     if (room.queue.length > 0) {
-      io.to(roomId).emit('playNextSong', room.queue[0]); // Play the next song
+      io.to(roomId).emit('playNextSong', room.queue[0]); 
     }
   }
 };

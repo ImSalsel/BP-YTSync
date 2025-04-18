@@ -42,6 +42,8 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
         thumbnail: video.snippet.thumbnails.default.url, 
         duration: parseISO8601Duration(video.contentDetails.duration), 
         votes: { likes: new Set(), dislikes: new Set() },
+        likes: 0,
+        dislikes: 0,
       };
     } else {
       const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
@@ -69,13 +71,15 @@ export const searchYouTube = async (query: string): Promise<Video | null> => {
 
       const videoDetails = videoDetailsResponse.data.items[0];
       return {
-        id: videoDetails.id,
+        id: uuidv4(),
         youtubeVideoId: videoDetails.id,
         title: videoDetails.snippet.title,
         url: `https://www.youtube.com/watch?v=${videoDetails.id}`,
         thumbnail: videoDetails.snippet.thumbnails.default.url, 
         duration: parseISO8601Duration(videoDetails.contentDetails.duration), 
         votes: { likes: new Set(), dislikes: new Set() },
+        likes: 0,
+        dislikes: 0,
       };
     }
   } catch (error) {

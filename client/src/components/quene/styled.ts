@@ -106,6 +106,8 @@ export const VoteItem = styled.div`
   font-family: 'Orbitron', sans-serif;
   font-size: 0.9rem;
   transition: transform 0.2s ease;
+  padding-left: 5px;
+  padding-right: 5px;
 
   &:hover {
     transform: scale(1.1);

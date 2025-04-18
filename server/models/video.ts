@@ -9,4 +9,6 @@ export interface Video {
   thumbnail: string; 
   duration: number;  
   votes: { likes: Set<string>; dislikes: Set<string> };
+  likes: number;
+  dislikes: number;
 }
