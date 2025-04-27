@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SongTitleContainer, SongTitleText, ScrollingText, StaticText } from './styled';
-import { useRoomContext } from '../../pages/room/RoomContext';
 import VolumeControl from '../volumeControl/VolumeControl';
 import { YouTubePlayer } from 'react-youtube';
 import TimeBar from '../timeBar/TimeBar';
+import { useRoomContext } from '../../context/RoomContext';
 
 interface SongTitleProps {
   volume: number;

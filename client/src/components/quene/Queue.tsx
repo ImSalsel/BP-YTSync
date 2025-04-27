@@ -1,7 +1,7 @@
 import { QueueContainer, Song, Thumbnail, SongDetails, VoteButtons, VoteItem } from './styled';
-import { useRoomContext } from '../../pages/room/RoomContext';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import { useRoomContext } from '../../context/RoomContext';
 
 const Queue: React.FC = () => {
   const { queue, removeSong, socket, roomId, isPrivate } = useRoomContext();

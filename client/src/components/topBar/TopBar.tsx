@@ -2,10 +2,10 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { TopBarContainer, HomeButton, RoomName, UserCount } from './styled';
 import { useNavigate } from 'react-router-dom';
-import { useRoomContext } from '../../pages/room/RoomContext';
 import PersonIcon from '@mui/icons-material/Person';
 
 import homeIcon from '../../assets/homeIcon.svg';
+import { useRoomContext } from '../../context/RoomContext';
 
 const TopBar: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();

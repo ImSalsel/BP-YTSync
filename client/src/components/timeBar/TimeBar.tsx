@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useRoomContext } from '../../pages/room/RoomContext';
 import { TimeBarContainer, ProgressBar, TimeText, ProgressBarFull, ProgressIndicator } from './styled';
+import { useRoomContext } from '../../context/RoomContext';
 
 const TimeBar: React.FC = () => {
   const { elapsedTime, player } = useRoomContext();

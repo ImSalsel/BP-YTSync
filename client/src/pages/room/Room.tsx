@@ -1,13 +1,14 @@
 import React from 'react';
 import { Overlay, QueueContainer, RoomContainer, SearchBar, SearchForm, VideoPlayer } from './styled';
 import YouTube from 'react-youtube';
-import { RoomProvider, useRoomContext } from './RoomContext';
+import { RoomProvider } from './useRoom';
 import NoVideo from '../../components/noVideo/NoVideo';
 import Queue from '../../components/quene/Queue';
 import SongTitle from '../../components/songTitle/SongTitle';
 import TopBar from '../../components/topBar/TopBar';
 import ErrorMessage from '../../components/errorMessage/ErrorMessage';
 import CodeDisplay from '../../components/codeDisplay/CodeDisplay';
+import { useRoomContext } from '../../context/RoomContext';
 
 const RoomContent: React.FC = () => {
   const { searchTerm, setSearchTerm, handleSearch, opts, onReady, youTubeVideoId: videoId, volume, setVolume, player, errorMessage, isPrivate, socket, roomId } = useRoomContext();
