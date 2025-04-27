@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { RoomContextProps } from '../pages/room/types';
+import { RoomContextProps } from './types';
 
 const RoomContext = createContext<RoomContextProps | undefined>(undefined);
 

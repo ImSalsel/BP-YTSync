@@ -1,12 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import { AuthContextType } from './types';
 
-interface AuthContextType {
-  loading: boolean;
-  isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
-}
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
