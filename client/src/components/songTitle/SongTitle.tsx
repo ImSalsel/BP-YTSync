@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SongTitleContainer, SongTitleText, ScrollingText, StaticText } from './styled';
 import VolumeControl from '../volumeControl/VolumeControl';
-import { YouTubePlayer } from 'react-youtube';
 import TimeBar from '../timeBar/TimeBar';
 import { useRoomContext } from '../../context/RoomContext';
+import { SongTitleProps } from './types';
 
-interface SongTitleProps {
-  volume: number;
-  setVolume: (volume: number) => void;
-  player: YouTubePlayer;
-}
+
 
 const SongTitle: React.FC<SongTitleProps> = ({ volume, setVolume, player }) => {
   const { queue } = useRoomContext();

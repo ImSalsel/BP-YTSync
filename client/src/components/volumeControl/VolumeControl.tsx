@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { VolumeSlider, VolumeIconWrapper, VolumeControlWrapper } from './styled';
-import { YouTubePlayer } from 'react-youtube';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
+import { VolumeControlProps } from './types';
 
-interface VolumeControlProps {
-  volume: number;
-  setVolume: (volume: number) => void;
-  player: YouTubePlayer;
-}
+
 
 const VolumeControl: React.FC<VolumeControlProps> = ({ volume, setVolume, player }) => {
   const [isHovered, setIsHovered] = useState(false);

@@ -11,12 +11,9 @@ import {
   ToggleLabel,
   ToggleInput,
 } from './styled';
+import { CreateRoomModalProps } from './types';
 
-interface CreateRoomModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onCreateRoom: (roomName: string, isPublic: boolean, userLimit: number | null) => void; // Pass additional room details to the parent
-}
+
 
 const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ isOpen, onClose, onCreateRoom }) => {
   const [newRoom, setNewRoom] = useState('');

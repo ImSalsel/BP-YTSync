@@ -2,13 +2,9 @@ import React from 'react';
 import { LockIconContainer, RoomTileContainer, UserCount } from "./styled";
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock'; 
+import { RoomTileProps } from './types';
 
-interface RoomTileProps {
-  name: string;
-  userCount: number;
-  isPublic: boolean;
-  onClick: () => void;
-}
+
 
 const RoomTile: React.FC<RoomTileProps> = ({ name, userCount, isPublic, onClick }) => {
   return (
