@@ -1,6 +1,13 @@
 import { styled } from "styled-components";
+import { HTMLAttributes } from 'react';
 
-export const RoomContainer = styled.div`
+interface TestCyProps extends HTMLAttributes<HTMLDivElement> {
+  'data-testid'?: string;
+}
+
+export const RoomContainer = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'room-container', 
+}))`
   width: 100vw;
   height: 100vh;
   background-color: rgb(31, 29, 32);
@@ -32,7 +39,9 @@ export const RoomContainer = styled.div`
 
 
 
-export const QueueContainer = styled.div`
+export const QueueContainer = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'queue-container', 
+}))`
   grid-area: Queue;
   width: 100%;
   height: 100%;
@@ -47,7 +56,9 @@ export const QueueContainer = styled.div`
   }
 `;
 
-export const VideoPlayer = styled.div`
+export const VideoPlayer = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'video-player', 
+}))`
   grid-area: YTvideo;
   width: 100%;
   height: 100%;
@@ -70,8 +81,8 @@ export const SearchForm = styled.form`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative; /* Ensure it is positioned relative to its parent */
-  top: 40px; /* Set the fixed top distance */
+  position: relative; 
+  top: 40px; 
 `;
 export const SearchBar = styled.input`
   background-color: rgb(18, 18, 19);

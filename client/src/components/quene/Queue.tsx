@@ -34,7 +34,7 @@ const Queue: React.FC = () => {
                 <span>{video.likes}</span>
                 </VoteItem>
               <VoteItem onClick={() => handleVote(video.id, 'dislike')}>
-                <ThumbDownIcon style={{ color: 'red', marginRight: '5px' }} />
+                <ThumbDownIcon style={{ color: 'red', marginRight: '5px' }} data-testid="dislike" />
                 <span>{video.dislikes}</span>
                 </VoteItem>
             </VoteButtons>

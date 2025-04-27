@@ -1,4 +1,9 @@
 import styled from 'styled-components';
+import { HTMLAttributes } from 'react';
+
+interface TestCyProps extends HTMLAttributes<HTMLDivElement> {
+  'data-testid'?: string;
+}
 
 export const BlurredCode = styled.span<{ visible: boolean }>`
   font-weight: bold;
@@ -8,7 +13,9 @@ export const BlurredCode = styled.span<{ visible: boolean }>`
   transition: filter 0.3s ease;
 `;
 
-export const CodeContainer = styled.div`
+export const CodeContainer = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'code-display', 
+}))`
   display: flex;
   position: absolute;
     top: 100px;

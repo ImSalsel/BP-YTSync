@@ -1,6 +1,13 @@
 import { styled } from "styled-components";
+import { HTMLAttributes } from 'react';
 
-export const RoomTileContainer = styled.div`
+interface TestCyProps extends HTMLAttributes<HTMLDivElement> {
+  'data-testid'?: string;
+}
+
+export const RoomTileContainer = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'room-tile', 
+}))`
   background-color: rgb(18, 18, 19);
   color: white;
   padding: 20px;

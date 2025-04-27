@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Modal,
   ModalContent,
@@ -10,7 +10,6 @@ import {
   ToggleContainer,
   ToggleLabel,
   ToggleInput,
-  UserLimitInput,
 } from './styled';
 
 interface CreateRoomModalProps {
@@ -51,6 +50,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ isOpen, onClose, onCr
             onChange={(e) => setNewRoom(sanitizeInput(e.target.value))}
             placeholder="Enter room name"
             maxLength={20}
+            data-testid="create-room-input"
           />
           <ToggleContainer>
             <ToggleLabel>
@@ -60,6 +60,7 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ isOpen, onClose, onCr
                 value="public"
                 checked={isPublic}
                 onChange={() => setIsPublic(true)}
+                data-testid="public-room"
               />
               Public
             </ToggleLabel>
@@ -70,20 +71,14 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ isOpen, onClose, onCr
                 value="private"
                 checked={!isPublic}
                 onChange={() => setIsPublic(false)}
+                data-testid="private-room"
               />
               Private
             </ToggleLabel>
           </ToggleContainer>
-          <UserLimitInput
-            type="number"
-            value={userLimit || ''}
-            onChange={(e) => setUserLimit(Number(e.target.value) || null)}
-            placeholder="Enter user limit (optional)"
-            min={1}
-            max={100}
-          />
+
           <ButtonContainer>
-            <CreateRoomButton type="submit">Create Room</CreateRoomButton>
+            <CreateRoomButton type="submit" data-testid="create-room-button">Create Room</CreateRoomButton>
             <CloseButton type="button" onClick={onClose}>
               Cancel
             </CloseButton>

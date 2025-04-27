@@ -15,13 +15,14 @@ const RoomContent: React.FC = () => {
   return (
     <RoomContainer>
       <TopBar />
-      {isPrivate && <CodeDisplay roomId={roomId} socket={socket} />}
+      {isPrivate && <CodeDisplay roomId={roomId} socket={socket}  />}
       <SearchForm onSubmit={handleSearch}>
         <SearchBar
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for a video or paste a YouTube link..."
+          data-testid="search-bar"
         />
       </SearchForm>
       {errorMessage && <ErrorMessage message={errorMessage} />}

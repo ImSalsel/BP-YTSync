@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { HTMLAttributes } from 'react';
 
+interface TestCyProps extends HTMLAttributes<HTMLDivElement> {
+  'data-testid'?: string;
+}
 export const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,7 +41,11 @@ export const StyledLink = styled(Link)`
 `;
 
 
-export const AddRoomTile = styled.div`
+
+
+export const AddRoomTile = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'add-room-tile', 
+}))`
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -55,10 +63,6 @@ export const AddRoomTile = styled.div`
     background-color: #218838;
   }
 `;
-
-
-
-
 
 export const Logo = styled.img`
   width: 250px; 

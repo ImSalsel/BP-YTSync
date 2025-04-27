@@ -1,6 +1,12 @@
 import { styled } from "styled-components";
+import { HTMLAttributes } from 'react';
 
-export const Modal = styled.div`
+interface TestCyProps extends HTMLAttributes<HTMLDivElement> {
+  'data-testid'?: string;
+}
+export const Modal = styled.div.attrs<TestCyProps>(() => ({
+  'data-testid': 'create-room-modal', 
+}))`
   position: fixed;
   top: 0;
   left: 0;
