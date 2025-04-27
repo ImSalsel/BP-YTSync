@@ -3,12 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAuth } from '../../context/AuthContext';
 import { useWebSocket } from '../../context/WebSocketContext';
+import { Room } from './types';
 
-interface Room {
-  name: string;
-  userCount: number;
-  isPublic: boolean;
-}
+
 
 const useHome = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
