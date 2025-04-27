@@ -4,10 +4,11 @@ import { useAuth } from '../../context/AuthContext';
 import { CredentialResponse } from '@react-oauth/google';
 import Cookies from 'js-cookie';
 
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID; 
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID 
 interface GoogleLoginButtonProps {
   onSuccess: () => void;
 }
+
 
 const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ onSuccess }) => {
   const { login } = useAuth();
